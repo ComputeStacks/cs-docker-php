@@ -1,5 +1,5 @@
 # Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:7.3-litespeed /sbin/my_init -- bash -l  
-FROM ghcr.io/computestacks/cs-docker-base:ubuntu
+FROM cmptstks/baseimage:ubuntu
 
 LABEL maintainer="ComputeStacks <hello@computestacks.com>"
 
