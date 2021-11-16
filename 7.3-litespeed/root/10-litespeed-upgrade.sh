@@ -13,8 +13,17 @@ if [ ! -f /usr/src/lsws/VERSION ]; then
 fi
 
 if [ -f /usr/local/lsws/.upgrade-lock ]; then
-  echo "Upgrade process already running, exiting upgrade process."
-  exit 0
+  # Check file age
+  upgrade_age=$(stat --format='%Y' /usr/local/lsws/.upgrade-lock)
+  current_time=$( date +%s )
+  # Older than 10 minutes, remove lock file and try again
+  if (( $upgrade_age < ( $current_time - ( 60 * 10 ) ) )); then
+    rm /usr/local/lsws/.upgrade-lock
+  else
+    echo "/usr/local/lsws/.upgrade-lock exists, waiting for existing upgrade to finish. create_time=$(stat --format='%y' /usr/local/lsws/.upgrade-lock)"
+    while read i; do if [ "$i" = .upgrade-lock ]; then break; fi; done \
+      < <(inotifywait -e delete,delete_self --format '%f' --quiet /usr/local/lsws --monitor)
+  fi
 fi
 
 touch /usr/local/lsws/.upgrade-lock

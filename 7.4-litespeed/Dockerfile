@@ -10,6 +10,7 @@ LABEL org.opencontainers.image.title="PHP 7.4 with OpenLiteSpeed"
 COPY root/monarx-agent.sh /tmp/
 COPY root/00-entrypoint.sh /etc/my_init.d/
 COPY root/10-litespeed-upgrade.sh /etc/my_init.d/
+COPY root/15-litespeed-password.sh /etc/my_init.d/
 COPY root/20-monarx-entry.sh /etc/my_init.d/
 COPY root/50-litespeed.sh /etc/my_init.d/
 
@@ -61,6 +62,7 @@ RUN set -ex; \
       ca-certificates \
       curl \
       xz-utils \
+      inotify-tools \
     ; \
     wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | bash \
     ; \
@@ -124,6 +126,7 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
     && cd /usr/local/lsws/lsphp74/bin \
     && chmod +x /etc/my_init.d/00-entrypoint.sh \
     && chmod +x /etc/my_init.d/10-litespeed-upgrade.sh \
+    && chmod +x /etc/my_init.d/15-litespeed-password.sh \
     && chmod +x /etc/my_init.d/50-litespeed.sh \
     && wget -O /tmp/go-pear.phar http://pear.php.net/go-pear.phar \
     && chmod +x -R /root/install_*.sh \
