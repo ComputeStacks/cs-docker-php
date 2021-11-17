@@ -12,6 +12,7 @@ COPY root/00-entrypoint.sh /etc/my_init.d/
 COPY root/10-litespeed-upgrade.sh /etc/my_init.d/
 COPY root/15-litespeed-password.sh /etc/my_init.d/
 COPY root/20-monarx-entry.sh /etc/my_init.d/
+COPY root/21-postfix.sh /etc/my_init.d/
 COPY root/50-litespeed.sh /etc/my_init.d/
 
 RUN set -ex; \
@@ -63,6 +64,12 @@ RUN set -ex; \
       curl \
       xz-utils \
       inotify-tools \
+      mailutils \
+      apt-utils \    
+    ; \
+    echo "postfix postfix/mailname string docker.local" | debconf-set-selections \
+    && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
+    && apt-get -y install postfix libsasl2-modules \
     ; \
     wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | bash \
     ; \
@@ -111,6 +118,7 @@ RUN set -ex; \
     && touch /etc/service/monarx/down \
     && chmod +x /etc/service/monarx/run \
     && chmod +x /etc/my_init.d/20-monarx-entry.sh \
+    && chmod +x /etc/my_init.d/21-postfix.sh \
     ; \
     apt-get clean \
     && rm -rf /var/lib/apt/lists/*
