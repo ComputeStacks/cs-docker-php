@@ -47,13 +47,15 @@ EOF
 
 postmark_header() {
   cat<<EOF
-/^From:/ PREPEND X-PM-Message-Stream: ${POSTMARK_STREAM}
+/^From:/ PREPEND X-PM-Message-Stream: ${PM_STREAM}
 EOF
 }
 
 config_postfix() {
   postfix_config > /etc/postfix/main.cf
   if [ -z ${PM_STREAM} ]; then
+    echo "Skipping Postmark Message Stream configuration..."
+  else
     postmark_header > /etc/postfix/postmark_header.pcre
     echo "smtp_header_checks = pcre:/etc/postfix/postmark_header.pcre" >> /etc/postfix/main.cf
   fi
