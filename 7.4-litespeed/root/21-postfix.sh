@@ -5,7 +5,7 @@
 #  * SMTP_PASSWORD
 #  * SMTP_SERVER
 #  * SMTP_PORT
-#
+#  * PM_STREAM 
 
 postfix_config() {
     cat<<EOF
@@ -41,11 +41,22 @@ smtp_tls_security_level = encrypt
 smtp_tls_loglevel = 1
 header_size_limit = 4096000
 relayhost = [${SMTP_SERVER}]:${SMTP_PORT}
+
+EOF
+}
+
+postmark_header() {
+  cat<<EOF
+/^From:/ PREPEND X-PM-Message-Stream: ${POSTMARK_STREAM}
 EOF
 }
 
 config_postfix() {
   postfix_config > /etc/postfix/main.cf
+  if [ -z ${PM_STREAM} ]; then
+    postmark_header > /etc/postfix/postmark_header.pcre
+    echo "smtp_header_checks = pcre:/etc/postfix/postmark_header.pcre" >> /etc/postfix/main.cf
+  fi
   FILES="etc/localtime etc/services etc/resolv.conf etc/hosts etc/nsswitch.conf"
   echo $HOSTNAME > /etc/mailname
   for file in $FILES; do

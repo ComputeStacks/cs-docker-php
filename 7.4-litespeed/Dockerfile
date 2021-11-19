@@ -69,7 +69,7 @@ RUN set -ex; \
     ; \
     echo "postfix postfix/mailname string docker.local" | debconf-set-selections \
     && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
-    && apt-get -y install postfix libsasl2-modules \
+    && apt-get -y install postfix postfix-pcre libsasl2-modules \
     ; \
     wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | bash \
     ; \
