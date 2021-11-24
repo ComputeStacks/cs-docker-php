@@ -97,4 +97,5 @@ cp -r /usr/local/lsws /usr/src \
     && sed -i 's/max_input_time = .*/max_input_time = 300/g' /usr/src/lsws/lsphp$PHP_NODOT/etc/php/$PHP_VERSION/litespeed/php.ini \
     && sed -i 's/max_execution_time = .*/max_execution_time = 300/g' /usr/src/lsws/lsphp$PHP_NODOT/etc/php/$PHP_VERSION/litespeed/php.ini \
     && echo "date.timezone = 'UTC'" >> /usr/src/lsws/lsphp$PHP_NODOT/etc/php/$PHP_VERSION/litespeed/php.ini \
-    && echo "post_max_size = 250M" >> /usr/src/lsws/lsphp$PHP_NODOT/etc/php/$PHP_VERSION/litespeed/php.ini
+    && echo "post_max_size = 250M" >> /usr/src/lsws/lsphp$PHP_NODOT/etc/php/$PHP_VERSION/litespeed/php.ini \
+    && cp /usr/src/lsws/conf/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf
