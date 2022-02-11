@@ -45,3 +45,4 @@ This image includes support for [Monarx](https://www.monarx.com). By default it'
 
 * `MONARX_ID`
 * `MONARX_SECRET`
+* `MONARX_AGENT` - unique name listed under tags.
