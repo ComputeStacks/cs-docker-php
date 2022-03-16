@@ -9,6 +9,7 @@ workflow:
     
 variables:
     FULL_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA-$CI_PIPELINE_ID
+    DH_IMAGE: cmptstks/php
 
 default:
   tags:
@@ -25,18 +26,18 @@ stages:
   - deploy
     
 build:
-  stage: build  
+  stage: build
   script:
-    - "docker build -t $CI_REGISTRY_IMAGE:7.4-litespeed 7.4-litespeed"
+    - "docker build -t $FULL_IMAGE 7.4-litespeed"
 deploy:
   stage: deploy
   script:
     - "docker tag $FULL_IMAGE $CI_REGISTRY_IMAGE:7.4-litespeed"
     - "docker tag $FULL_IMAGE $CI_REGISTRY_IMAGE:latest"
-    - "docker tag $FULL_IMAGE cmptstks/php:7.4-litespeed"
-    - "docker tag $FULL_IMAGE cmptstks/php:latest"
+    - "docker tag $FULL_IMAGE $DH_IMAGE:7.4-litespeed"
+    - "docker tag $FULL_IMAGE $DH_IMAGE:latest"
     - "docker push $FULL_IMAGE"
     - "docker push $CI_REGISTRY_IMAGE:latest"
     - "docker push $CI_REGISTRY_IMAGE:7.4-litespeed"
-    - "docker push cmptstks/php:7.4-litespeed"
-    - "docker push cmptstks/php:latest"
+    - "docker push $DH_IMAGE:7.4-litespeed"
+    - "docker push $DH_IMAGE:latest"
