@@ -8,12 +8,14 @@ LABEL org.opencontainers.image.url="https://github.com/ComputeStacks/cs-docker-p
 LABEL org.opencontainers.image.title="PHP 7.4 with OpenLiteSpeed"
 
 COPY root/monarx-agent.sh /tmp/
-COPY root/00-entrypoint.sh /etc/my_init.d/
-COPY root/10-litespeed-upgrade.sh /etc/my_init.d/
-COPY root/15-litespeed-password.sh /etc/my_init.d/
-COPY root/20-monarx-entry.sh /etc/my_init.d/
-COPY root/21-postfix.sh /etc/my_init.d/
-COPY root/50-litespeed.sh /etc/my_init.d/
+COPY root/40-ls-config.sh /etc/my_init.d/
+COPY root/50-entrypoint.sh /etc/my_init.d/
+COPY root/60-litespeed-upgrade.sh /etc/my_init.d/
+COPY root/60-php-config.sh /etc/my_init.d/
+COPY root/90-litespeed-password.sh /etc/my_init.d/
+COPY root/90-monarx-entry.sh /etc/my_init.d/
+COPY root/90-postfix.sh /etc/my_init.d/
+COPY root/99-litespeed.sh /etc/my_init.d/
 
 RUN set -ex; \
     \
@@ -132,10 +134,7 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
     && rm lsphp \
     && ln -s /usr/local/lsws/lsphp74/bin/lsphp lsphp \
     && cd /usr/local/lsws/lsphp74/bin \
-    && chmod +x /etc/my_init.d/00-entrypoint.sh \
-    && chmod +x /etc/my_init.d/10-litespeed-upgrade.sh \
-    && chmod +x /etc/my_init.d/15-litespeed-password.sh \
-    && chmod +x /etc/my_init.d/50-litespeed.sh \
+    && chmod +x /etc/my_init.d/*.sh \
     && wget -O /tmp/go-pear.phar http://pear.php.net/go-pear.phar \
     && chmod +x -R /root/install_*.sh \
     && /root/install_pear.sh \
