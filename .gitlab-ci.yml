@@ -1,0 +1,32 @@
+# will never run on a git push or merge request event.
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - when: always
+    
+stages:
+  - build
+  - deploy
+    
+build:
+  stage: build
+  tags:
+    - shell  
+  script:
+    - "docker build -t cmptstks/php:7.4-litespeed"
+deploy:
+  stage: deploy
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker login -u $GH_USER -p $GH_PW
+  after_script:
+    - docker logout $CI_REGISTRY
+    - docker logout
+  script:
+    - "docker tag cmptstks/php:7.4-litespeed cmptstks/php:latest"
+    - "docker push cmptstks/php:7.4-litespeed"
+    - "docker push cmptstks/php:latest"
+  
