@@ -1,10 +1,10 @@
 # Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:7.4-litespeed /sbin/my_init -- bash -l  
-FROM cmptstks/baseimage:ubuntu
+FROM cr.cmptstks.com/cs-public/images/base-image:ubuntu
 
-LABEL maintainer="https://github.com/ComputeStacks"
-LABEL org.opencontainers.image.authors="https://github.com/ComputeStacks"
-LABEL org.opencontainers.image.source="https://github.com/ComputeStacks/cs-docker-php/tree/main/7.4-litespeed"
-LABEL org.opencontainers.image.url="https://github.com/ComputeStacks/cs-docker-php/tree/main/7.4-litespeed"
+LABEL maintainer="https://computestacks.com"
+LABEL org.opencontainers.image.authors="https://computestacks.com"
+LABEL org.opencontainers.image.source="https://git.cmptstks.com/cs-public/images/php/-/tree/main/7.4-litespeed"
+LABEL org.opencontainers.image.url="https://git.cmptstks.com/cs-public/images/php/-/tree/main/7.4-litespeed"
 LABEL org.opencontainers.image.title="PHP 7.4 with OpenLiteSpeed"
 
 COPY root/monarx-agent.sh /tmp/
