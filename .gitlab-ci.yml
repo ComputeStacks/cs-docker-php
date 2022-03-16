@@ -16,7 +16,7 @@ build:
   tags:
     - shell  
   script:
-    - "docker build -t cmptstks/php:7.4-litespeed"
+    - "docker build -t $CI_REGISTRY_IMAGE:7.4-litespeed 7.4-litespeed"
 deploy:
   stage: deploy
   before_script:
@@ -26,6 +26,7 @@ deploy:
     - docker logout $CI_REGISTRY
     - docker logout
   script:
+    - "docker tag $CI_REGISTRY_IMAGE:7.4-litespeed cmptstks/php:7.4-litespeed"
     - "docker tag cmptstks/php:7.4-litespeed cmptstks/php:latest"
     - "docker push cmptstks/php:7.4-litespeed"
     - "docker push cmptstks/php:latest"
