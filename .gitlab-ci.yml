@@ -22,14 +22,14 @@ deploy:
   tags:
   - shell
   before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker login -u $GH_USER -p $GH_PW
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password-stdin
+    - echo "$GH_PW" | docker login -u $GH_USER --password-stdin
   after_script:
     - docker logout $CI_REGISTRY
     - docker logout
   script:
     - "docker tag $CI_REGISTRY_IMAGE:7.4-litespeed cmptstks/php:7.4-litespeed"
     - "docker tag cmptstks/php:7.4-litespeed cmptstks/php:latest"
+    - "docker push $CI_REGISTRY_IMAGE:7.4-litespeed"
     - "docker push cmptstks/php:7.4-litespeed"
     - "docker push cmptstks/php:latest"
-  
