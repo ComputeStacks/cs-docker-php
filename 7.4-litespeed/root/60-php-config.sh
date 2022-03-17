@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -euo pipefail
-
 echo >&2 "Setting PHP tunables..."
 
 if [ -z ${PHP_INPUT_VAR} ]; then

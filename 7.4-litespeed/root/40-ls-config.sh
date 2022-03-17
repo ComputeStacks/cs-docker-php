@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -euo pipefail
-
 if ! [ "$(ls -A /usr/local/lsws)" ]; then
   echo >&2 "OpenLiteSpeed not configured, setting configuration..."
   
