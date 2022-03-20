@@ -28,7 +28,7 @@ stages:
 build:
   stage: build
   script:
-    - "docker build -t $FULL_IMAGE 7.4-litespeed"
+    - "docker build --no-cache -t $FULL_IMAGE 7.4-litespeed"
 deploy:
   stage: deploy
   script:
