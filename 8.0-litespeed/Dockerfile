@@ -1,19 +1,21 @@
 # Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:8.0-litespeed /sbin/my_init -- bash -l  
-FROM cmptstks/baseimage:ubuntu
+FROM cr.cmptstks.com/cs-public/images/base-image:ubuntu
 
-LABEL maintainer="https://github.com/ComputeStacks"
-LABEL org.opencontainers.image.authors="https://github.com/ComputeStacks"
-LABEL org.opencontainers.image.source="https://github.com/ComputeStacks/cs-docker-php/tree/main/8.0-litespeed"
-LABEL org.opencontainers.image.url="https://github.com/ComputeStacks/cs-docker-php/tree/main/8.0-litespeed"
+LABEL maintainer="https://computestacks.com"
+LABEL org.opencontainers.image.authors="https://computestacks.com"
+LABEL org.opencontainers.image.source="https://git.cmptstks.com/cs-public/images/php/-/tree/main/8.0-litespeed"
+LABEL org.opencontainers.image.url="https://git.cmptstks.com/cs-public/images/php/-/tree/main/8.0-litespeed"
 LABEL org.opencontainers.image.title="PHP 8.0 with OpenLiteSpeed"
 
 COPY root/monarx-agent.sh /tmp/
-COPY root/00-entrypoint.sh /etc/my_init.d/
-COPY root/10-litespeed-upgrade.sh /etc/my_init.d/
-COPY root/15-litespeed-password.sh /etc/my_init.d/
-COPY root/20-monarx-entry.sh /etc/my_init.d/
-COPY root/21-postfix.sh /etc/my_init.d/
-COPY root/50-litespeed.sh /etc/my_init.d/
+COPY root/40-ls-config.sh /etc/my_init.d/
+COPY root/50-entrypoint.sh /etc/my_init.d/
+COPY root/60-litespeed-upgrade.sh /etc/my_init.d/
+COPY root/60-php-config.sh /etc/my_init.d/
+COPY root/90-litespeed-password.sh /etc/my_init.d/
+COPY root/90-monarx-entry.sh /etc/my_init.d/
+COPY root/90-postfix.sh /etc/my_init.d/
+COPY root/99-litespeed.sh /etc/my_init.d/
 
 RUN set -ex; \
     \
@@ -74,6 +76,12 @@ RUN set -ex; \
     wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | bash \
     ; \
     apt-get install -y --no-install-recommends \
+      lsphp73 \
+      lsphp73-common \
+      lsphp73-json \
+      lsphp73-mysql \
+      lsphp73-imap \
+      lsphp73-opcache \
       lsphp80 \
       lsphp80-common \
       lsphp80-curl \
@@ -124,10 +132,7 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
     && rm lsphp \
     && ln -s /usr/local/lsws/lsphp80/bin/lsphp lsphp \
     && cd /usr/local/lsws/lsphp80/bin \
-    && chmod +x /etc/my_init.d/00-entrypoint.sh \
-    && chmod +x /etc/my_init.d/10-litespeed-upgrade.sh \
-    && chmod +x /etc/my_init.d/15-litespeed-password.sh \
-    && chmod +x /etc/my_init.d/50-litespeed.sh \
+    && chmod +x /etc/my_init.d/*.sh \
     && wget -O /tmp/go-pear.phar http://pear.php.net/go-pear.phar \
     && chmod +x -R /root/install_*.sh \
     && /root/install_pear.sh \
