@@ -57,6 +57,7 @@ RUN set -ex; \
       xz-utils \
       rcs \
       inotify-tools \
+      sudo \
     ; \
     wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | bash \
     ; \

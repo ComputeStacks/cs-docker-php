@@ -1,6 +1,13 @@
 # ComputeStacks PHP OpenLiteSpeed Images
 
-[![php v7.3](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php73.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php73.yml) [![php v7.4](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php74.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php74.yml)
+[![gitlab ci](https://git.cmptstks.com/cs-public/images/php/badges/main/pipeline.svg)](https://git.cmptstks.com/cs-public/images/php/-/jobs)
 
-* [v7.3](https://github.com/ComputeStacks/cs-docker-php/tree/main/7.3-litespeed)
-* [v7.4](https://github.com/ComputeStacks/cs-docker-php/tree/main/7.4-litespeed)
+## Submitting Issues
+
+You may open an issue on our gitlab instance, [here](https://git.cmptstks.com/cs-public/images/php/-/issues). However, for questions or how-to's, please [post on our forum](https://forum.computestacks.com).
+
+
+## Contributing
+
+Contributions are welcome! Before you submit a pull request, feel free to [post on our forum](https://forum.computestacks.com) your idea and we can have a discussion.
+
