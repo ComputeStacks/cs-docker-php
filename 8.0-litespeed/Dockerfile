@@ -67,7 +67,7 @@ RUN set -ex; \
       xz-utils \
       inotify-tools \
       mailutils \
-      apt-utils \    
+      apt-utils \
     ; \
     echo "postfix postfix/mailname string docker.local" | debconf-set-selections \
     && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
@@ -76,12 +76,6 @@ RUN set -ex; \
     wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | bash \
     ; \
     apt-get install -y --no-install-recommends \
-      lsphp73 \
-      lsphp73-common \
-      lsphp73-json \
-      lsphp73-mysql \
-      lsphp73-imap \
-      lsphp73-opcache \
       lsphp80 \
       lsphp80-common \
       lsphp80-curl \
@@ -159,7 +153,5 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
 COPY root/lswsctrl.sh /usr/local/bin/lswsctrl
 COPY root/httpd_config.conf /usr/src/lsws/conf/httpd_config.conf
 COPY root/monarx-agent.conf /etc/monarx-agent.conf
-
-RUN mkdir /usr/local/lsws
 
 EXPOSE 80 7080
