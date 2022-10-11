@@ -3,8 +3,8 @@ FROM ghcr.io/computestacks/cs-docker-base:ubuntu-focal
 
 LABEL maintainer="https://computestacks.com"
 LABEL org.opencontainers.image.authors="https://computestacks.com"
-LABEL org.opencontainers.image.source="https://git.cmptstks.com/cs-public/images/php/-/tree/main/8.1-litespeed"
-LABEL org.opencontainers.image.url="https://git.cmptstks.com/cs-public/images/php/-/tree/main/8.1-litespeed"
+LABEL org.opencontainers.image.source="https://github.com/ComputeStacks/cs-docker-php/tree/main/8.1-litespeed"
+LABEL org.opencontainers.image.url="https://github.com/ComputeStacks/cs-docker-php/tree/main/8.1-litespeedd"
 LABEL org.opencontainers.image.title="PHP 8.1 with OpenLiteSpeed"
 
 COPY root/monarx-agent.sh /tmp/
