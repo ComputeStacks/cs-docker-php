@@ -1,10 +1,13 @@
 # ComputeStacks PHP OpenLiteSpeed Images
 
-[![gitlab ci](https://git.cmptstks.com/cs-public/images/php/badges/main/pipeline.svg)](https://git.cmptstks.com/cs-public/images/php/-/jobs)
+* [![PHP 8.1](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-1.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-1.yml)
+* [![PHP 8.0](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-0.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-0.yml)
+* [![PHP 7.4](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php7-4.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php7-4.yml)
+* [![PHP 7.3](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php7-3.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php7-3.yml)
 
 ## Submitting Issues
 
-You may open an issue on our gitlab instance, [here](https://git.cmptstks.com/cs-public/images/php/-/issues). However, for questions or how-to's, please [post on our forum](https://forum.computestacks.com).
+If you encounter a technical issue, you may [open an issue](https://github.com/ComputeStacks/cs-docker-php/issues). However, for questions or how-to's, please [post on our forum](https://forum.computestacks.com).
 
 
 ## Contributing
