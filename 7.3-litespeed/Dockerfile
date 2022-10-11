@@ -1,5 +1,5 @@
 # Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:7.3-litespeed /sbin/my_init -- bash -l  
-FROM cmptstks/baseimage:ubuntu
+FROM cscr.cc/cs-public/images/base-image:ubuntu
 
 LABEL maintainer="https://github.com/ComputeStacks"
 LABEL org.opencontainers.image.authors="https://github.com/ComputeStacks"
@@ -91,6 +91,7 @@ COPY root/vhosts /usr/local/lsws/conf/vhosts/
 COPY root/pecl/install_pear.sh /root/
 COPY root/pecl/install_mcrypt.sh /root/
 COPY root/ioncube_loader_lin_7.3.so /usr/local/lsws/lsphp73/lib/php/20180731/
+COPY root/migrate_php.sh /usr/local/bin/migrate_php_version
 
 RUN cd /usr/local/lsws/fcgi-bin/ \
     && rm lsphp \
@@ -100,10 +101,11 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
     && chmod +x /etc/my_init.d/10-litespeed-upgrade.sh \
     && chmod +x /etc/my_init.d/15-litespeed-password.sh \
     && chmod +x /etc/my_init.d/50-litespeed.sh \
+    && chmod +x /usr/local/bin/migrate_php_version \
     && wget -O /tmp/go-pear.phar http://pear.php.net/go-pear.phar \
     && chmod +x -R /root/install_*.sh \
     && /root/install_pear.sh \
-    && /usr/local/lsws/lsphp73/bin/pecl channel-update pecl.php.net \    
+    && /usr/local/lsws/lsphp73/bin/pecl channel-update pecl.php.net \
     && /root/install_mcrypt.sh \
     && echo "extension=mcrypt.so" >> /usr/local/lsws/lsphp73/etc/php/7.3/mods-available/50-mcrypt.ini \
     && echo "zend_extension=ioncube_loader_lin_7.3.so" >> /usr/local/lsws/lsphp73/etc/php/7.3/mods-available/ioncube.ini \

@@ -1,5 +1,5 @@
 # Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:7.4-litespeed /sbin/my_init -- bash -l  
-FROM cr.cmptstks.com/cs-public/images/base-image:ubuntu
+FROM cscr.cc/cs-public/images/base-image:ubuntu
 
 LABEL maintainer="https://computestacks.com"
 LABEL org.opencontainers.image.authors="https://computestacks.com"
@@ -16,6 +16,7 @@ COPY root/90-litespeed-password.sh /etc/my_init.d/
 COPY root/90-monarx-entry.sh /etc/my_init.d/
 COPY root/90-postfix.sh /etc/my_init.d/
 COPY root/99-litespeed.sh /etc/my_init.d/
+COPY root/migrate_php.sh /usr/local/bin/migrate_php_version
 
 RUN set -ex; \
     \
@@ -67,7 +68,7 @@ RUN set -ex; \
       xz-utils \
       inotify-tools \
       mailutils \
-      apt-utils \    
+      apt-utils \
     ; \
     echo "postfix postfix/mailname string docker.local" | debconf-set-selections \
     && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
@@ -121,6 +122,7 @@ RUN set -ex; \
     && chmod +x /etc/service/monarx/run \
     && chmod +x /etc/my_init.d/20-monarx-entry.sh \
     && chmod +x /etc/my_init.d/21-postfix.sh \
+    && chmod +x /usr/local/bin/migrate_php_version \
     ; \
     apt-get clean \
     && rm -rf /var/lib/apt/lists/*

@@ -1,5 +1,5 @@
 # Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:8.1-litespeed /sbin/my_init -- bash -l  
-FROM cr.cmptstks.com/cs-public/images/base-image:ubuntu
+FROM cscr.cc/cs-public/images/base-image:ubuntu
 
 LABEL maintainer="https://computestacks.com"
 LABEL org.opencontainers.image.authors="https://computestacks.com"
@@ -16,6 +16,7 @@ COPY root/90-litespeed-password.sh /etc/my_init.d/
 COPY root/90-monarx-entry.sh /etc/my_init.d/
 COPY root/90-postfix.sh /etc/my_init.d/
 COPY root/99-litespeed.sh /etc/my_init.d/
+COPY root/migrate_php.sh /usr/local/bin/migrate_php_version
 
 RUN set -ex; \
     \
@@ -112,6 +113,7 @@ RUN set -ex; \
     && chmod +x /etc/service/monarx/run \
     && chmod +x /etc/my_init.d/20-monarx-entry.sh \
     && chmod +x /etc/my_init.d/21-postfix.sh \
+    && chmod +x /usr/local/bin/migrate_php_version \
     ; \
     apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -119,7 +121,6 @@ RUN set -ex; \
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/
 COPY root/pecl/install_pear.sh /root/
-COPY root/pecl/install_mcrypt.sh /root/
 
 RUN cd /usr/local/lsws/fcgi-bin/ \
     && rm lsphp \
@@ -129,11 +130,6 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
     && wget -O /tmp/go-pear.phar http://pear.php.net/go-pear.phar \
     && chmod +x -R /root/install_*.sh \
     && /root/install_pear.sh \
-    && /usr/local/lsws/lsphp81/bin/pecl channel-update pecl.php.net \
-    ; \
-    /root/install_mcrypt.sh \
-    ; \
-    echo "extension=mcrypt.so" >> /usr/local/lsws/lsphp81/etc/php/8.1/mods-available/50-mcrypt.ini \
     && rm /root/install_*.sh \
     && rm /usr/local/lsws/conf/httpd_config.conf \
     ; \
