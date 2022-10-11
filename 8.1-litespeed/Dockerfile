@@ -111,8 +111,6 @@ RUN set -ex; \
     && mv /tmp/monarx-agent.sh /etc/service/monarx/run \
     && touch /etc/service/monarx/down \
     && chmod +x /etc/service/monarx/run \
-    && chmod +x /etc/my_init.d/20-monarx-entry.sh \
-    && chmod +x /etc/my_init.d/21-postfix.sh \
     && chmod +x /usr/local/bin/migrate_php_version \
     ; \
     apt-get clean \
