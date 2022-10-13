@@ -1,5 +1,5 @@
 # Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:8.1-litespeed /sbin/my_init -- bash -l  
-FROM ghcr.io/computestacks/cs-docker-base:ubuntu-focal
+FROM ghcr.io/computestacks/cs-docker-base:ubuntu-jammy
 
 LABEL maintainer="https://computestacks.com"
 LABEL org.opencontainers.image.authors="https://computestacks.com"
@@ -101,8 +101,8 @@ RUN set -ex; \
     ; \
     mkdir -p /var/www && mkdir /usr/src/default \
     ; \
-    curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | apt-key add - \
-    && echo "deb [arch=amd64] https://repository.monarx.com/repository/ubuntu-focal/ focal main" > /etc/apt/sources.list.d/monarx.list \
+    curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | gpg -o /usr/share/keyrings/monarx-archive-keyring.gpg --dearmor \
+    && echo "deb [signed-by=/usr/share/keyrings/monarx-archive-keyring.gpg] https://repository.monarx.com/repository/ubuntu-jammy/ jammy main" > /etc/apt/sources.list.d/monarx.list \
     ; \
     apt-get update \
     && apt-get -y install monarx-agent monarx-protect \
