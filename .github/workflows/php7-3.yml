@@ -1,6 +1,7 @@
 name: "PHP 7.3"
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
     paths:
