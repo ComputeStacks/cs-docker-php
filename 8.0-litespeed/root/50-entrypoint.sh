@@ -9,6 +9,8 @@ if ! [ "$(ls -A /var/www)" ]; then
   echo >&2 "Complete! Sample files have been successfully copied to /var/www/"
 fi
 
+mkdir -p /var/www/logs && chown www-data:www-data /var/www/logs
+
 if [ -f /var/www/crontab ]; then
   echo >&2 "Crontab found, moving to cron.d directory..."
   cp /var/www/crontab /etc/cron.d/myapp && chown root:root /etc/cron.d/myapp
