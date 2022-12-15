@@ -145,8 +145,8 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
 
 ADD https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.zip /tmp/ioncube.zip
 RUN unzip /tmp/ioncube.zip -d /usr/src/ \
-    && cp /usr/src/ioncube/ioncube_loader_lin_8.1.so /usr/local/lsws/lsphp81/lib/php/20210902/ \
-    && echo "zend_extension=ioncube_loader_lin_8.1.so" > /usr/local/lsws/lsphp81/etc/php/8.1/mods-available/ioncube.ini
+    && cp /usr/src/ioncube/ioncube_loader_lin_8.1.so /usr/src/lsws/lsphp81/lib/php/20210902/ \
+    && echo "zend_extension=ioncube_loader_lin_8.1.so" > /usr/src/lsws/lsphp81/etc/php/8.1/mods-available/ioncube.ini
 
 COPY root/lswsctrl.sh /usr/local/bin/lswsctrl
 COPY root/httpd_config.conf /usr/src/lsws/conf/httpd_config.conf
