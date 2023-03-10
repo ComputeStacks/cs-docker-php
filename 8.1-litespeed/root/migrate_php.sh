@@ -24,23 +24,23 @@ fi
 touch /usr/local/lsws/.upgrade-lock
 
 echo "Saving current configuration..."
-mkdir -p /root/.lsws_snapshot
+mkdir -p /var/www/.lsws_snapshot
 if [ -f /usr/local/lsws/admin/conf/admin_config.conf ]; then
-  mv /usr/local/lsws/admin/conf/admin_config.conf /root/.lsws_snapshot/
+  mv /usr/local/lsws/admin/conf/admin_config.conf /var/www/.lsws_snapshot/
 fi
 if [ -f /usr/local/lsws/admin/conf/htpasswd ]; then
-  mv /usr/local/lsws/admin/conf/htpasswd /root/.lsws_snapshot/
+  mv /usr/local/lsws/admin/conf/htpasswd /var/www/.lsws_snapshot/
 fi
 if [ -d /usr/local/lsws/conf ]; then
-  mv /usr/local/lsws/conf /root/.lsws_snapshot/
+  mv /usr/local/lsws/conf /var/www/.lsws_snapshot/
 fi
 echo "Installing new version..."
 rm -rf /usr/local/lsws/* && mv /usr/src/lsws/* /usr/local/lsws/
 echo "Restoring previous configuration..."
-mv /root/.lsws_snapshot/admin_config.conf /usr/local/lsws/admin/conf/
-mv /root/.lsws_snapshot/htpasswd /usr/local/lsws/admin/conf/
-rm -rf /usr/local/lsws/conf && mv /root/.lsws_snapshot/conf /usr/local/lsws/
+mv /var/www/.lsws_snapshot/admin_config.conf /usr/local/lsws/admin/conf/
+mv /var/www/.lsws_snapshot/htpasswd /usr/local/lsws/admin/conf/
+rm -rf /usr/local/lsws/conf && mv /var/www/.lsws_snapshot/conf /usr/local/lsws/
 chown -R lsadm: /usr/local/lsws/conf/vhosts
-rm -rf /root/.lsws_snapshot
+rm -rf /var/www/.lsws_snapshot
 rm /usr/local/lsws/.upgrade-lock
 echo "Finished php version migration."

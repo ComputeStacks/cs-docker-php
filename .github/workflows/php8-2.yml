@@ -7,11 +7,11 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - "8.1-litespeed/**"
+      - "8.2-litespeed/**"
   pull_request:
     branches: [ "main" ]
     paths:
-      - "8.1-litespeed/**"
+      - "8.2-litespeed/**"
 
 env:
   # The default repo env will be 'ComputeStacks'; uppercase is not allowed.
@@ -51,10 +51,12 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v3
         with:
-          context: 8.1-litespeed/
+          context: 8.2-litespeed/
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            cmptstks/php:8.1-litespeed
-            ghcr.io/${{ env.GH_REPO }}:8.1-litespeed
+            cmptstks/php:8.2-litespeed
+            cmptstks/php:latest
+            ghcr.io/${{ env.GH_REPO }}:8.2-litespeed
+            ghcr.io/${{ env.GH_REPO }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
