@@ -1,4 +1,4 @@
-# PHP 7.4 Open Litespeed Container
+# PHP 8.0 Open Litespeed Container
 
 ## Litespeed Configuration
 All configuration is stored in a separate, persistent, volume under `/usr/local/lsws`. To modify this, use the built-in OpenLiteSpeed administrator. View the domain in the control panel; it's using port `7080`.
