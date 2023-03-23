@@ -118,17 +118,12 @@ RUN set -ex; \
 
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/
-COPY root/pecl/install_pear.sh /root/
 
 RUN cd /usr/local/lsws/fcgi-bin/ \
     && rm lsphp \
     && ln -s /usr/local/lsws/lsphp81/bin/lsphp lsphp \
     && cd /usr/local/lsws/lsphp81/bin \
     && chmod +x /etc/my_init.d/*.sh \
-    && wget -O /tmp/go-pear.phar http://pear.php.net/go-pear.phar \
-    && chmod +x -R /root/install_*.sh \
-    && /root/install_pear.sh \
-    && rm /root/install_*.sh \
     && rm /usr/local/lsws/conf/httpd_config.conf \
     ; \
     mv /usr/local/lsws /usr/src \

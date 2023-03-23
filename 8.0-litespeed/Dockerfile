@@ -119,7 +119,6 @@ RUN set -ex; \
 
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/
-COPY root/pecl/install_pear.sh /root/
 COPY root/pecl/install_mcrypt.sh /root/
 
 RUN cd /usr/local/lsws/fcgi-bin/ \
@@ -127,9 +126,6 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
     && ln -s /usr/local/lsws/lsphp80/bin/lsphp lsphp \
     && cd /usr/local/lsws/lsphp80/bin \
     && chmod +x /etc/my_init.d/*.sh \
-    && wget -O /tmp/go-pear.phar http://pear.php.net/go-pear.phar \
-    && chmod +x -R /root/install_*.sh \
-    && /root/install_pear.sh \
     && /usr/local/lsws/lsphp80/bin/pecl channel-update pecl.php.net \
     ; \
     /root/install_mcrypt.sh \
