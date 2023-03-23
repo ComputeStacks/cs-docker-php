@@ -1,10 +1,10 @@
 # Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:8.1-litespeed /sbin/my_init -- bash -l  
-FROM cr.cmptstks.com/cs-public/images/base-image:ubuntu
+FROM ghcr.io/computestacks/cs-docker-base:ubuntu-jammy
 
 LABEL maintainer="https://computestacks.com"
 LABEL org.opencontainers.image.authors="https://computestacks.com"
-LABEL org.opencontainers.image.source="https://git.cmptstks.com/cs-public/images/php/-/tree/main/8.1-litespeed"
-LABEL org.opencontainers.image.url="https://git.cmptstks.com/cs-public/images/php/-/tree/main/8.1-litespeed"
+LABEL org.opencontainers.image.source="https://github.com/ComputeStacks/cs-docker-php/tree/main/8.1-litespeed"
+LABEL org.opencontainers.image.url="https://github.com/ComputeStacks/cs-docker-php/tree/main/8.1-litespeedd"
 LABEL org.opencontainers.image.title="PHP 8.1 with OpenLiteSpeed"
 
 COPY root/monarx-agent.sh /tmp/
@@ -16,6 +16,7 @@ COPY root/90-litespeed-password.sh /etc/my_init.d/
 COPY root/90-monarx-entry.sh /etc/my_init.d/
 COPY root/90-postfix.sh /etc/my_init.d/
 COPY root/99-litespeed.sh /etc/my_init.d/
+COPY root/migrate_php.sh /usr/local/bin/migrate_php_version
 
 RUN set -ex; \
     \
@@ -67,7 +68,7 @@ RUN set -ex; \
       xz-utils \
       inotify-tools \
       mailutils \
-      apt-utils \    
+      apt-utils \
     ; \
     echo "postfix postfix/mailname string docker.local" | debconf-set-selections \
     && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
@@ -100,8 +101,8 @@ RUN set -ex; \
     ; \
     mkdir -p /var/www && mkdir /usr/src/default \
     ; \
-    curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | apt-key add - \
-    && echo "deb [arch=amd64] https://repository.monarx.com/repository/ubuntu-focal/ focal main" > /etc/apt/sources.list.d/monarx.list \
+    curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | gpg -o /usr/share/keyrings/monarx-archive-keyring.gpg --dearmor \
+    && echo "deb [signed-by=/usr/share/keyrings/monarx-archive-keyring.gpg] https://repository.monarx.com/repository/ubuntu-jammy/ jammy main" > /etc/apt/sources.list.d/monarx.list \
     ; \
     apt-get update \
     && apt-get -y install monarx-agent monarx-protect \
@@ -110,31 +111,19 @@ RUN set -ex; \
     && mv /tmp/monarx-agent.sh /etc/service/monarx/run \
     && touch /etc/service/monarx/down \
     && chmod +x /etc/service/monarx/run \
-    && chmod +x /etc/my_init.d/20-monarx-entry.sh \
-    && chmod +x /etc/my_init.d/21-postfix.sh \
+    && chmod +x /usr/local/bin/migrate_php_version \
     ; \
     apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/
-COPY root/pecl/install_pear.sh /root/
-COPY root/pecl/install_mcrypt.sh /root/
 
 RUN cd /usr/local/lsws/fcgi-bin/ \
     && rm lsphp \
     && ln -s /usr/local/lsws/lsphp81/bin/lsphp lsphp \
     && cd /usr/local/lsws/lsphp81/bin \
     && chmod +x /etc/my_init.d/*.sh \
-    && wget -O /tmp/go-pear.phar http://pear.php.net/go-pear.phar \
-    && chmod +x -R /root/install_*.sh \
-    && /root/install_pear.sh \
-    && /usr/local/lsws/lsphp81/bin/pecl channel-update pecl.php.net \
-    ; \
-    /root/install_mcrypt.sh \
-    ; \
-    echo "extension=mcrypt.so" >> /usr/local/lsws/lsphp81/etc/php/8.1/mods-available/50-mcrypt.ini \
-    && rm /root/install_*.sh \
     && rm /usr/local/lsws/conf/httpd_config.conf \
     ; \
     mv /usr/local/lsws /usr/src \
@@ -149,10 +138,13 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
     ; \
     usermod -u 1001 www-data && groupmod -g 1001 www-data
 
+ADD https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.zip /tmp/ioncube.zip
+RUN unzip /tmp/ioncube.zip -d /usr/src/ \
+    && cp /usr/src/ioncube/ioncube_loader_lin_8.1.so /usr/src/lsws/lsphp81/lib/php/20210902/ \
+    && echo "zend_extension=ioncube_loader_lin_8.1.so" > /usr/src/lsws/lsphp81/etc/php/8.1/mods-available/ioncube.ini
+
 COPY root/lswsctrl.sh /usr/local/bin/lswsctrl
 COPY root/httpd_config.conf /usr/src/lsws/conf/httpd_config.conf
 COPY root/monarx-agent.conf /etc/monarx-agent.conf
-
-RUN mkdir /usr/local/lsws
 
 EXPOSE 80 7080

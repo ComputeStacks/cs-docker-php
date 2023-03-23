@@ -1,11 +1,11 @@
-# Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:8.0-litespeed /sbin/my_init -- bash -l  
-FROM ghcr.io/computestacks/cs-docker-base:ubuntu-focal
+# Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:8.2-litespeed /sbin/my_init -- bash -l  
+FROM ghcr.io/computestacks/cs-docker-base:ubuntu-jammy
 
 LABEL maintainer="https://computestacks.com"
 LABEL org.opencontainers.image.authors="https://computestacks.com"
-LABEL org.opencontainers.image.source="https://github.com/ComputeStacks/cs-docker-php/tree/main/8.0-litespeed"
-LABEL org.opencontainers.image.url="https://github.com/ComputeStacks/cs-docker-php/tree/main/8.0-litespeed"
-LABEL org.opencontainers.image.title="PHP 8.0 with OpenLiteSpeed"
+LABEL org.opencontainers.image.source="https://github.com/ComputeStacks/cs-docker-php/tree/main/8.2-litespeed"
+LABEL org.opencontainers.image.url="https://github.com/ComputeStacks/cs-docker-php/tree/main/8.2-litespeedd"
+LABEL org.opencontainers.image.title="PHP 8.2 with OpenLiteSpeed"
 
 COPY root/monarx-agent.sh /tmp/
 COPY root/40-ls-config.sh /etc/my_init.d/
@@ -77,21 +77,20 @@ RUN set -ex; \
     wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | bash \
     ; \
     apt-get install -y --no-install-recommends \
-      lsphp80 \
-      lsphp80-common \
-      lsphp80-curl \
-      lsphp80-dev \
-      lsphp80-imap \
-      lsphp80-imagick \
-      lsphp80-intl \
-      lsphp80-memcached \
-      lsphp80-msgpack \
-      lsphp80-mysql \
-      lsphp80-opcache \
-      lsphp80-pear \
-      lsphp80-pgsql \
-      lsphp80-redis \
-      lsphp80-sqlite3 \
+      lsphp82 \
+      lsphp82-common \
+      lsphp82-curl \
+      lsphp82-dev \
+      lsphp82-imap \
+      lsphp82-imagick \
+      lsphp82-intl \
+      lsphp82-memcached \
+      lsphp82-msgpack \
+      lsphp82-mysql \
+      lsphp82-opcache \
+      lsphp82-pgsql \
+      lsphp82-redis \
+      lsphp82-sqlite3 \
       php-cli \
       php-mysql \
       openlitespeed \
@@ -102,8 +101,8 @@ RUN set -ex; \
     ; \
     mkdir -p /var/www && mkdir /usr/src/default \
     ; \
-    curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | apt-key add - \
-    && echo "deb [arch=amd64] https://repository.monarx.com/repository/ubuntu-focal/ focal main" > /etc/apt/sources.list.d/monarx.list \
+    curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | gpg -o /usr/share/keyrings/monarx-archive-keyring.gpg --dearmor \
+    && echo "deb [signed-by=/usr/share/keyrings/monarx-archive-keyring.gpg] https://repository.monarx.com/repository/ubuntu-jammy/ jammy main" > /etc/apt/sources.list.d/monarx.list \
     ; \
     apt-get update \
     && apt-get -y install monarx-agent monarx-protect \
@@ -119,30 +118,23 @@ RUN set -ex; \
 
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/
-COPY root/pecl/install_mcrypt.sh /root/
 
 RUN cd /usr/local/lsws/fcgi-bin/ \
     && rm lsphp \
-    && ln -s /usr/local/lsws/lsphp80/bin/lsphp lsphp \
-    && cd /usr/local/lsws/lsphp80/bin \
+    && ln -s /usr/local/lsws/lsphp82/bin/lsphp lsphp \
+    && cd /usr/local/lsws/lsphp82/bin \
     && chmod +x /etc/my_init.d/*.sh \
-    && /usr/local/lsws/lsphp80/bin/pecl channel-update pecl.php.net \
-    ; \
-    /root/install_mcrypt.sh \
-    ; \
-    echo "extension=mcrypt.so" >> /usr/local/lsws/lsphp80/etc/php/8.0/mods-available/50-mcrypt.ini \
-    && rm /root/install_*.sh \
     && rm /usr/local/lsws/conf/httpd_config.conf \
     ; \
     mv /usr/local/lsws /usr/src \
     && chown -R lsadm:lsadm /usr/src/lsws/conf \
-    && echo "max_input_vars = 3000" >> /usr/src/lsws/lsphp80/etc/php/8.0/litespeed/php.ini \
-    && sed -i 's/memory_limit = .*/memory_limit = 192M/g' /usr/src/lsws/lsphp80/etc/php/8.0/litespeed/php.ini \
-    && sed -i 's/upload_max_filesize = .*/upload_max_filesize = 250M/g' /usr/src/lsws/lsphp80/etc/php/8.0/litespeed/php.ini \
-    && sed -i 's/max_input_time = .*/max_input_time = 300/g' /usr/src/lsws/lsphp80/etc/php/8.0/litespeed/php.ini \
-    && sed -i 's/max_execution_time = .*/max_execution_time = 300/g' /usr/src/lsws/lsphp80/etc/php/8.0/litespeed/php.ini \
-    && echo "date.timezone = 'UTC'" >> /usr/src/lsws/lsphp80/etc/php/8.0/litespeed/php.ini \
-    && echo "post_max_size = 250M" >> /usr/src/lsws/lsphp80/etc/php/8.0/litespeed/php.ini \
+    && echo "max_input_vars = 3000" >> /usr/src/lsws/lsphp82/etc/php/8.2/litespeed/php.ini \
+    && sed -i 's/memory_limit = .*/memory_limit = 192M/g' /usr/src/lsws/lsphp82/etc/php/8.2/litespeed/php.ini \
+    && sed -i 's/upload_max_filesize = .*/upload_max_filesize = 250M/g' /usr/src/lsws/lsphp82/etc/php/8.2/litespeed/php.ini \
+    && sed -i 's/max_input_time = .*/max_input_time = 300/g' /usr/src/lsws/lsphp82/etc/php/8.2/litespeed/php.ini \
+    && sed -i 's/max_execution_time = .*/max_execution_time = 300/g' /usr/src/lsws/lsphp82/etc/php/8.2/litespeed/php.ini \
+    && echo "date.timezone = 'UTC'" >> /usr/src/lsws/lsphp82/etc/php/8.2/litespeed/php.ini \
+    && echo "post_max_size = 250M" >> /usr/src/lsws/lsphp82/etc/php/8.2/litespeed/php.ini \
     ; \
     usermod -u 1001 www-data && groupmod -g 1001 www-data
 

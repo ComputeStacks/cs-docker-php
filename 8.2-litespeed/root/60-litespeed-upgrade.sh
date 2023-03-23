@@ -56,7 +56,6 @@ if [ $CURRENT_VERSION != $NEW_VERSION ]; then
     chown -R lsadm: /usr/local/lsws/conf/vhosts
     rm -rf /var/www/.lsws_snapshot
     echo "Finished upgrade to $NEW_VERSION"
-    # echo "Fatal error, /usr/src/openlitespeed_${LS_VERSION}_amd64.deb"
   fi
 else
   echo "Installed version matches current version, exiting upgrade process."

@@ -1,4 +1,6 @@
-# PHP 8.1 with OpenLiteSpeed
+# PHP 8.2 with OpenLiteSpeed
+
+> NOTE! IonCube is not included in this release. Once they release a version for php 8.2, we will update our image to support that.
 
 ## SMTP Configuration
 
