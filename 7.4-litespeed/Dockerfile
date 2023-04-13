@@ -8,11 +8,14 @@ LABEL org.opencontainers.image.url="https://github.com/ComputeStacks/cs-docker-p
 LABEL org.opencontainers.image.title="PHP 7.4 with OpenLiteSpeed"
 
 COPY root/monarx-agent.sh /tmp/
+COPY root/postfix-run.sh /tmp/
+COPY root/monarx-agent.sh /tmp/
 COPY root/40-ls-config.sh /etc/my_init.d/
 COPY root/50-entrypoint.sh /etc/my_init.d/
 COPY root/60-litespeed-upgrade.sh /etc/my_init.d/
 COPY root/60-php-config.sh /etc/my_init.d/
 COPY root/90-litespeed-password.sh /etc/my_init.d/
+COPY root/91-litespeed-config.sh /etc/my_init.d/
 COPY root/90-monarx-entry.sh /etc/my_init.d/
 COPY root/90-postfix.sh /etc/my_init.d/
 COPY root/99-litespeed.sh /etc/my_init.d/
@@ -130,7 +133,16 @@ COPY root/vhosts /usr/local/lsws/conf/vhosts/
 COPY root/pecl/install_pear.sh /root/
 COPY root/pecl/install_mcrypt.sh /root/
 
-RUN cd /usr/local/lsws/fcgi-bin/ \
+RUN mkdir -p /etc/service/postfix \
+    && mkdir -p /etc/service/postfix-log \
+    && mv /tmp/postfix-run.sh /etc/service/postfix/run \
+    && mv /tmp/postfix-log-run.sh /etc/service/postfix-log/run \
+    && chmod +x /etc/service/postfix/run \
+    && chmod +x /etc/service/postfix-log/run \
+    && touch /etc/service/postfix/down \
+    && touch /etc/service/postfix-log/down \
+    ; \
+    cd /usr/local/lsws/fcgi-bin/ \
     && rm lsphp \
     && ln -s /usr/local/lsws/lsphp74/bin/lsphp lsphp \
     && cd /usr/local/lsws/lsphp74/bin \
