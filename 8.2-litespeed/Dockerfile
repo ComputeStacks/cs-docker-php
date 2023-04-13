@@ -122,7 +122,8 @@ RUN set -ex; \
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/
 
-RUN mkdir -p /etc/service/{postfix,postfix-log} \
+RUN mkdir -p /etc/service/postfix \
+    && mkdir -p /etc/service/postfix-log \
     && mv /tmp/postfix-run.sh /etc/service/postfix/run \
     && mv /tmp/postfix-log-run.sh /etc/service/postfix-log/run \
     && chmod +x /etc/service/postfix/run \
