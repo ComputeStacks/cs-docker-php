@@ -9,7 +9,7 @@ LABEL org.opencontainers.image.title="PHP 8.1 with OpenLiteSpeed"
 
 COPY root/monarx-agent.sh /tmp/
 COPY root/postfix-run.sh /tmp/
-COPY root/monarx-agent.sh /tmp/
+COPY root/postfix-log-run.sh /tmp/
 COPY root/40-ls-config.sh /etc/my_init.d/
 COPY root/50-entrypoint.sh /etc/my_init.d/
 COPY root/60-litespeed-upgrade.sh /etc/my_init.d/
