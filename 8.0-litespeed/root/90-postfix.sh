@@ -97,10 +97,16 @@ config_postfix() {
 
 if [ -z ${SMTP_USERNAME} ] || [ -z ${SMTP_PASSWORD} ] || [ -z ${SMTP_SERVER} ] || [ -z ${SMTP_PORT} ]; then
   echo "SMTP Service not configured"
+  touch /etc/service/postfix/down
+  touch /etc/service/postfix-log/down
 else
   echo "Configuring SMTP Service for ${SMTP_SERVER}..."
   config_postfix
   echo "Starting SMTP Service"
-  rm /etc/service/postfix/down
-  rm /etc/service/postfix-log/down
+  if [ -f /etc/service/postfix/down ]; then
+    rm /etc/service/postfix/down
+  fi
+  if [ -f /etc/service/postfix-log/down ]; then
+    rm /etc/service/postfix-log/down
+  fi
 fi
