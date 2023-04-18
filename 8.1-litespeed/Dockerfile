@@ -15,6 +15,7 @@ COPY root/60-php-config.sh /etc/my_init.d/
 COPY root/90-litespeed-password.sh /etc/my_init.d/
 COPY root/90-monarx-entry.sh /etc/my_init.d/
 COPY root/90-postfix.sh /etc/my_init.d/
+COPY root/90-relay.sh /etc/my_init.d/
 COPY root/99-litespeed.sh /etc/my_init.d/
 COPY root/migrate_php.sh /usr/local/bin/migrate_php_version
 
@@ -142,6 +143,11 @@ ADD https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.zi
 RUN unzip /tmp/ioncube.zip -d /usr/src/ \
     && cp /usr/src/ioncube/ioncube_loader_lin_8.1.so /usr/src/lsws/lsphp81/lib/php/20210902/ \
     && echo "zend_extension=ioncube_loader_lin_8.1.so" > /usr/src/lsws/lsphp81/etc/php/8.1/mods-available/ioncube.ini
+
+RUN mkdir /usr/src/relay
+ADD "https://builds.r2.relay.so/v0.6.1/relay-v0.6.1-php8.1-debian-x86-64%2Blibssl3.tar.gz" /tmp/relay.tar.gz
+RUN tar -xzf /tmp/relay.tar.gz -C /usr/src/relay
+
 
 COPY root/lswsctrl.sh /usr/local/bin/lswsctrl
 COPY root/httpd_config.conf /usr/src/lsws/conf/httpd_config.conf
