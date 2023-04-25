@@ -3,9 +3,9 @@
 # Installation of Relay
 RELAY=v0.6.3
 PLATFORM=$(uname -m | sed 's/_/-/')
-RELAY_PHP=$(/usr/local/lsws/lsphp81/bin/php-config --version | cut -c -3) 
-RELAY_INI_DIR=$(/usr/local/lsws/lsphp81/bin/php-config --ini-dir)          
-RELAY_EXT_DIR=$(/usr/local/lsws/lsphp81/bin/php-config --extension-dir)    
+RELAY_PHP=$(/usr/local/lsws/lsphp82/bin/php-config --version | cut -c -3) 
+RELAY_INI_DIR=$(/usr/local/lsws/lsphp82/bin/php-config --ini-dir)          
+RELAY_EXT_DIR=$(/usr/local/lsws/lsphp82/bin/php-config --extension-dir)    
 
 # if $PHP_INI_DIR/60-relay.ini does not exist, cp relay.ini to $PHP_INI_DIR/60-relay.ini
 if [ ! -f "$RELAY_INI_DIR/60-relay.ini" ]; then
@@ -16,13 +16,13 @@ if [ ! -f "$RELAY_EXT_DIR/relay.so" ]; then
     cp "/usr/src/relay/relay-$RELAY-php$RELAY_PHP-debian-$PLATFORM+libssl3/relay-pkg.so" "$RELAY_EXT_DIR/relay.so"
 fi
 
-cp "/usr/src/relay/relay-$RELAY-php8.1-debian-$PLATFORM+libssl3/relay.ini" "$PHP_INI_DIR/60-relay.ini" 
-cp "/usr/src/relay/relay-$RELAY-php8.1-debian-$PLATFORM+libssl3/relay-pkg.so" "$PHP_EXT_DIR/relay.so"
+cp "/usr/src/relay/relay-$RELAY-php8.2-debian-$PLATFORM+libssl3/relay.ini" "$PHP_INI_DIR/60-relay.ini" 
+cp "/usr/src/relay/relay-$RELAY-php8.2-debian-$PLATFORM+libssl3/relay-pkg.so" "$PHP_EXT_DIR/relay.so"
 
 sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXT_DIR/relay.so"
 
 # setting configuration;
-RELAY_INI="/usr/local/lsws/lsphp81/etc/php/8.1/litespeed/php.ini"
+RELAY_INI="/usr/local/lsws/lsphp82/etc/php/8.2/litespeed/php.ini"
 
 if [ -z "$RELAY_LICENSE" ]; then
     sed -i "s/^;\? \?relay.key =.*/relay.key = $RELAY_LICENSE/" $RELAY_INI

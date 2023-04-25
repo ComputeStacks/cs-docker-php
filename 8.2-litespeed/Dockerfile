@@ -15,6 +15,7 @@ COPY root/60-php-config.sh /etc/my_init.d/
 COPY root/90-litespeed-password.sh /etc/my_init.d/
 COPY root/90-monarx-entry.sh /etc/my_init.d/
 COPY root/90-postfix.sh /etc/my_init.d/
+COPY root/90-relay.sh /etc/my_init.d/
 COPY root/99-litespeed.sh /etc/my_init.d/
 COPY root/migrate_php.sh /usr/local/bin/migrate_php_version
 
@@ -137,6 +138,10 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
     && echo "post_max_size = 250M" >> /usr/src/lsws/lsphp82/etc/php/8.2/litespeed/php.ini \
     ; \
     usermod -u 1001 www-data && groupmod -g 1001 www-data
+
+RUN mkdir /usr/src/relay
+ADD "https://builds.r2.relay.so/v0.6.3/relay-v0.6.3-php8.2-debian-x86-64%2Blibssl3.tar.gz" /tmp/relay.tar.gz
+RUN tar -xzf /tmp/relay.tar.gz -C /usr/src/relay
 
 COPY root/lswsctrl.sh /usr/local/bin/lswsctrl
 COPY root/httpd_config.conf /usr/src/lsws/conf/httpd_config.conf
