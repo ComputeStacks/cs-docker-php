@@ -148,7 +148,8 @@ RUN cd /usr/local/lsws/fcgi-bin/ \
     usermod -u 1001 www-data && groupmod -g 1001 www-data
 
 RUN mkdir /usr/src/relay
-ADD "https://builds.r2.relay.so/v0.6.3/relay-v0.6.3-php8.0-debian-x86-64%2Blibssl3.tar.gz" /tmp/relay.tar.gz
+RUN RELAY_VERSION=$(curl -s https://builds.r2.relay.so/meta/latest) && \
+    wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php8.1-debian-x86-64%2Blibssl3.tar.gz"
 RUN tar -xzf /tmp/relay.tar.gz -C /usr/src/relay
 
 COPY root/lswsctrl.sh /usr/local/bin/lswsctrl

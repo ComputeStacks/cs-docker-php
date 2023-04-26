@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Installation of Relay
-RELAY=v0.6.3
+RELAY=$(curl https://builds.r2.relay.so/meta/latest)
 PLATFORM=$(uname -m | sed 's/_/-/')
 RELAY_PHP=$(/usr/local/lsws/lsphp80/bin/php-config --version | cut -c -3) 
 RELAY_INI_DIR=$(/usr/local/lsws/lsphp80/bin/php-config --ini-dir)          
