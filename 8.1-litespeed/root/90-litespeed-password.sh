@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -euo pipefail
-
 if [[ -z "${LS_ADMIN_PW}" ]]; then
   echo >&2 "Litespeed admin password not set, leaving default of 123456."
 else
@@ -13,3 +11,7 @@ else
     echo "Failed to set Litespeed admin password to ${LS_ADMIN_PW}, leaving default at 123456."
   fi
 fi
+
+echo "Ensuring Litespeed Admin file permissions are correct"
+chown lsadm:lsadm /usr/local/lsws/admin/conf/admin_config.conf
+chown lsadm:lsadm /usr/local/lsws/admin/conf/htpasswd

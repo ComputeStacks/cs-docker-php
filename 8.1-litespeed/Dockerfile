@@ -8,11 +8,15 @@ LABEL org.opencontainers.image.url="https://github.com/ComputeStacks/cs-docker-p
 LABEL org.opencontainers.image.title="PHP 8.1 with OpenLiteSpeed"
 
 COPY root/monarx-agent.sh /tmp/
+COPY root/postfix-run.sh /tmp/
+COPY root/postfix-log-run.sh /tmp/
 COPY root/40-ls-config.sh /etc/my_init.d/
 COPY root/50-entrypoint.sh /etc/my_init.d/
 COPY root/60-litespeed-upgrade.sh /etc/my_init.d/
 COPY root/60-php-config.sh /etc/my_init.d/
+COPY root/61-newrelic.sh /etc/my_init.d/
 COPY root/90-litespeed-password.sh /etc/my_init.d/
+COPY root/91-litespeed-config.sh /etc/my_init.d/
 COPY root/90-monarx-entry.sh /etc/my_init.d/
 COPY root/90-postfix.sh /etc/my_init.d/
 COPY root/99-litespeed.sh /etc/my_init.d/
@@ -69,6 +73,9 @@ RUN set -ex; \
       inotify-tools \
       mailutils \
       apt-utils \
+      libzstd-dev \
+      liblzf-dev \
+      git \
     ; \
     echo "postfix postfix/mailname string docker.local" | debconf-set-selections \
     && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
@@ -89,8 +96,8 @@ RUN set -ex; \
       lsphp81-mysql \
       lsphp81-opcache \
       lsphp81-pgsql \
-      lsphp81-redis \
       lsphp81-sqlite3 \
+      lsphp81-modules-source \
       php-cli \
       php-mysql \
       openlitespeed \
@@ -100,6 +107,9 @@ RUN set -ex; \
       libzip-dev \
     ; \
     mkdir -p /var/www && mkdir /usr/src/default \
+    ; \
+    ln -s /usr/local/lsws/lsphp81/bin/phpize /usr/local/bin/phpize; \
+    ln -s /usr/local/lsws/lsphp81/bin/php-config /usr/local/bin/php-config \
     ; \
     curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | gpg -o /usr/share/keyrings/monarx-archive-keyring.gpg --dearmor \
     && echo "deb [signed-by=/usr/share/keyrings/monarx-archive-keyring.gpg] https://repository.monarx.com/repository/ubuntu-jammy/ jammy main" > /etc/apt/sources.list.d/monarx.list \
@@ -116,10 +126,41 @@ RUN set -ex; \
     apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN cd /usr/src; \
+    git clone https://github.com/phpredis/phpredis.git \
+        && cd /usr/src/phpredis \
+        && git checkout $(curl https://api.github.com/repos/phpredis/phpredis/releases/latest | grep -i "tag_name" | awk -F '"' '{print $4}') \
+        && phpize \
+        && ./configure --enable-redis-igbinary --enable-redis-zstd --with-liblzf --enable-redis-msgpack \
+        && make \
+        && make install
+
+RUN cd /usr/src; \
+    wget -O /usr/src/newrelic.tar.gz https://download.newrelic.com$(curl -f -L https://download.newrelic.com/php_agent/release/ | grep -Eo "/\S+-linux.tar.gz\"" | tr -d '"') \
+    && tar -xzvf newrelic.tar.gz \
+    && mv newrelic-php5-*-linux newrelic \
+    && mv newrelic/daemon/newrelic-daemon.x64 /usr/bin/newrelic-daemon \
+    && chown root: /usr/bin/newrelic-daemon \
+    && mkdir -p /var/log/newrelic \
+    && touch /var/log/newrelic/newrelic-daemon.log \
+    && chmod 666 /var/log/newrelic/newrelic-daemon.log \
+    && touch /var/log/newrelic/php_agent.log \
+    && chmod 644 /var/log/newrelic/php_agent.log \
+    && rm newrelic.tar.gz
+
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/
 
-RUN cd /usr/local/lsws/fcgi-bin/ \
+RUN mkdir -p /etc/service/postfix \
+    && mkdir -p /etc/service/postfix-log \
+    && mv /tmp/postfix-run.sh /etc/service/postfix/run \
+    && mv /tmp/postfix-log-run.sh /etc/service/postfix-log/run \
+    && chmod +x /etc/service/postfix/run \
+    && chmod +x /etc/service/postfix-log/run \
+    && touch /etc/service/postfix/down \
+    && touch /etc/service/postfix-log/down \
+    ; \
+    cd /usr/local/lsws/fcgi-bin/ \
     && rm lsphp \
     && ln -s /usr/local/lsws/lsphp81/bin/lsphp lsphp \
     && cd /usr/local/lsws/lsphp81/bin \
