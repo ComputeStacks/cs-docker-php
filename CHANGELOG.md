@@ -1,5 +1,12 @@
 # ComputeStacks PHP OpenLiteSpeed Changelog
 
+## 2023-Apr-25
+
+* PHP 8.1: PHP Redis now compiled with additional compression algorithms.
+* PHP 8.1: Initial support for new relic
+
+***
+
 ## 2023-Apr-13
 
 * Ensure older sites running our containers have the updated log configuration within the vhost.

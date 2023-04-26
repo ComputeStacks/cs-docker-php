@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -euo pipefail
-
 if [[ -z "${LS_ADMIN_PW}" ]]; then
   echo >&2 "Litespeed admin password not set, leaving default of 123456."
 else
