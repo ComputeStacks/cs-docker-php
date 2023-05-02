@@ -18,7 +18,6 @@ COPY root/61-newrelic.sh /etc/my_init.d/
 COPY root/90-litespeed-password.sh /etc/my_init.d/
 COPY root/91-litespeed-config.sh /etc/my_init.d/
 COPY root/90-monarx-entry.sh /etc/my_init.d/
-COPY root/90-relay.sh /etc/my_init.d/
 COPY root/90-postfix.sh /etc/my_init.d/
 COPY root/99-litespeed.sh /etc/my_init.d/
 COPY root/migrate_php.sh /usr/local/bin/migrate_php_version
@@ -110,6 +109,9 @@ RUN set -ex; \
     ; \
     mkdir -p /var/www && mkdir /usr/src/default \
     ; \
+    ln -s /usr/local/lsws/lsphp80/bin/phpize /usr/local/bin/phpize; \
+    ln -s /usr/local/lsws/lsphp80/bin/php-config /usr/local/bin/php-config \
+    ; \
     curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | apt-key add - \
     && echo "deb [arch=amd64] https://repository.monarx.com/repository/ubuntu-focal/ focal main" > /etc/apt/sources.list.d/monarx.list \
     ; \
@@ -133,11 +135,7 @@ RUN cd /usr/src; \
         && ./configure --enable-redis-igbinary --enable-redis-zstd --with-liblzf --enable-redis-msgpack \
         && make \
         && make install \
-    ; \
-    RELAY_VERSION=$(curl -fs -L https://builds.r2.relay.so/meta/latest | awk -F '"' '{print $1}') \
-        && wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php8.0-debian-x86-64%2Blibssl3.tar.gz" \
-        && tar -xzf /tmp/relay.tar.gz -C /usr/src \
-        && mv /usr/src/relay-* /usr/src/relay \
+        && echo "extension=redis.so" > /usr/local/lsws/lsphp80/etc/php/8.0/mods-available/redis.ini \
     ; \
     wget -O /tmp/newrelic.tar.gz https://download.newrelic.com$(curl -fs -L https://download.newrelic.com/php_agent/release/ | grep -Eo "/\S+-linux.tar.gz\"" | tr -d '"') \
         && tar -xzvf /tmp/newrelic.tar.gz -C /usr/src \
@@ -148,7 +146,8 @@ RUN cd /usr/src; \
         && touch /var/log/newrelic/newrelic-daemon.log \
         && chmod 666 /var/log/newrelic/newrelic-daemon.log \
         && touch /var/log/newrelic/php_agent.log \
-        && chmod 644 /var/log/newrelic/php_agent.log
+        && chmod 644 /var/log/newrelic/php_agent.log \
+        && rm /tmp/newrelic.tar.gz
 
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/

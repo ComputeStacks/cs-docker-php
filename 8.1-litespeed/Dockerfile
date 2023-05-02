@@ -135,11 +135,13 @@ RUN cd /usr/src; \
         && ./configure --enable-redis-igbinary --enable-redis-zstd --with-liblzf --enable-redis-msgpack \
         && make \
         && make install \
+        && echo "extension=redis.so" > /usr/local/lsws/lsphp81/etc/php/8.1/mods-available/redis.ini \
     ; \
     RELAY_VERSION=$(curl -fs -L https://builds.r2.relay.so/meta/latest | awk -F '"' '{print $1}') \
         && wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php8.1-debian-x86-64%2Blibssl3.tar.gz" \
         && tar -xzf /tmp/relay.tar.gz -C /usr/src \
         && mv /usr/src/relay-* /usr/src/relay \
+        && rm /tmp/relay.tar.gz \
     ; \
     wget -O /tmp/newrelic.tar.gz https://download.newrelic.com$(curl -fs -L https://download.newrelic.com/php_agent/release/ | grep -Eo "/\S+-linux.tar.gz\"" | tr -d '"') \
         && tar -xzvf /tmp/newrelic.tar.gz -C /usr/src \
@@ -150,7 +152,8 @@ RUN cd /usr/src; \
         && touch /var/log/newrelic/newrelic-daemon.log \
         && chmod 666 /var/log/newrelic/newrelic-daemon.log \
         && touch /var/log/newrelic/php_agent.log \
-        && chmod 644 /var/log/newrelic/php_agent.log
+        && chmod 644 /var/log/newrelic/php_agent.log \
+        && rm /tmp/newrelic.tar.gz
 
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/

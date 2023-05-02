@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Configure Relay
-RELAY_INI_DIR=$(/usr/local/lsws/lsphp81/bin/php-config --ini-dir)
-RELAY_EXT_DIR=$(/usr/local/lsws/lsphp81/bin/php-config --extension-dir)
+RELAY_INI_DIR=$(/usr/local/bin/php-config --ini-dir)
+RELAY_EXT_DIR=$(/usr/local/bin/php-config --extension-dir)
 RELAY_INI="${RELAY_INI_DIR}60-relay.ini"
 
 # if $PHP_INI_DIR/60-relay.ini does not exist, cp relay.ini to $PHP_INI_DIR/60-relay.ini
 # Allow customizations outside of the defined env vars.
 if [ ! -f "$RELAY_INI_DIR/60-relay.ini" ]; then
-    cp "/usr/src/relay/relay.ini" "$RELAY_INI_DIR/60-relay.ini"
+    cp "/usr/src/relay/relay.ini" "$RELAY_INI"
 fi
 
 cp "/usr/src/relay/relay-pkg.so" "$RELAY_EXT_DIR/relay.so"
@@ -34,4 +34,4 @@ sed -i "s/^;\? \?relay.max_endpoint_dbs =.*/relay.max_endpoint_dbs = ${RELAY_MAX
 sed -i "s/^;\? \?relay.initial_readers =.*/relay.initial_readers = ${RELAY_INITIAL_READERS:-128}/" $RELAY_INI
 sed -i "s/^;\? \?relay.invalidation_poll_freq =.*/relay.invalidation_poll_freq = ${RELAY_INVALIDATION_POLL_FREQ:-5}/" $RELAY_INI
 sed -i "s/^;\? \?relay.loglevel =.*/relay.loglevel = ${RELAY_LOGLEVEL:-off}/" $RELAY_INI
-sed -i "s|^;\? \?relay.logfile = .*|relay.logfile = ${RELAY_LOGFILE:-/var/log/www/logs/relay}|" $RELAY_INI
+sed -i "s|^;\? \?relay.logfile = .*|relay.logfile = ${RELAY_LOGFILE:-/var/www/logs/relay.log}|" $RELAY_INI

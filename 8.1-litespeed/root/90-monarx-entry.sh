@@ -1,7 +1,19 @@
 #!/bin/bash
 
-if [ -z ${MONARX_ID} ] || [ -z ${MONARX_SECRET} ]; then
+MONARX_PHP_VERSION=$(/usr/local/bin/php-config --version | awk -F '[.]' '{print $1 $2}')
+PHP_INI_DIR=$(/usr/local/bin/php-config --ini-dir)
+PHP_EXT_DIR=$(/usr/local/bin/php-config --extension-dir)
+
+if [ ! -f "/usr/lib/monarx-protect/monarxprotect-php${MONARX_PHP_VERSION}.so" ]; then
+  echo >&2 "PHP Version for Monarx not present, skipping."
+   if [ ! -f /etc/service/monarx/down ]; then
+    touch /etc/service/monarx/down
+  fi
+elif [ -z ${MONARX_ID} ] || [ -z ${MONARX_SECRET} ]; then
   echo >&2 "MONARX_ID or MONARX_SECRET not set, disabling monarx."
+   if [ ! -f /etc/service/monarx/down ]; then
+    touch /etc/service/monarx/down
+  fi
 else
   sed -i "s/SET_CLIENT_ID/$MONARX_ID/g" /etc/monarx-agent.conf
   sed -i "s/SET_CLIENT_SECRET/$MONARX_SECRET/g" /etc/monarx-agent.conf
@@ -12,11 +24,11 @@ else
     sed -i "s/SET_SERVICE_NAME/$MONARX_AGENT/g" /etc/monarx-agent.conf
   fi
   # grab latest file
-  if [ -f /usr/local/lsws/lsphp81/lib/php/20210902/monarxprotect-php81.so ]; then
-    rm /usr/local/lsws/lsphp81/lib/php/20210902/monarxprotect-php81.so
+  if [ -f "${PHP_EXT_DIR}monarxprotect-php${MONARX_PHP_VERSION}.so" ]; then
+    rm "${PHP_EXT_DIR}monarxprotect-php${MONARX_PHP_VERSION}.so"
   fi
-  cp /usr/lib/monarx-protect/monarxprotect-php81.so /usr/local/lsws/lsphp81/lib/php/20210902/
-  echo "extension=monarxprotect-php81.so" > /usr/local/lsws/lsphp81/etc/php/8.1/mods-available/monarxprotect.ini
+  cp /usr/lib/monarx-protect/monarxprotect-php${MONARX_PHP_VERSION}.so $PHP_EXT_DIR
+  echo "extension=monarxprotect-php${MONARX_PHP_VERSION}.so" > "${PHP_INI_DIR}monarxprotect.ini"
   if [ -f /etc/service/monarx/down ]; then
     echo "Activating Monarx"
     rm /etc/service/monarx/down

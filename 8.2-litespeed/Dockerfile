@@ -109,6 +109,9 @@ RUN set -ex; \
     ; \
     mkdir -p /var/www && mkdir /usr/src/default \
     ; \
+    ln -s /usr/local/lsws/lsphp82/bin/phpize /usr/local/bin/phpize; \
+    ln -s /usr/local/lsws/lsphp82/bin/php-config /usr/local/bin/php-config \
+    ; \
     curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | gpg -o /usr/share/keyrings/monarx-archive-keyring.gpg --dearmor \
     && echo "deb [signed-by=/usr/share/keyrings/monarx-archive-keyring.gpg] https://repository.monarx.com/repository/ubuntu-jammy/ jammy main" > /etc/apt/sources.list.d/monarx.list \
     ; \
@@ -132,11 +135,13 @@ RUN cd /usr/src; \
         && ./configure --enable-redis-igbinary --enable-redis-zstd --with-liblzf --enable-redis-msgpack \
         && make \
         && make install \
+        && echo "extension=redis.so" > /usr/local/lsws/lsphp82/etc/php/8.2/mods-available/redis.ini \
     ; \
     RELAY_VERSION=$(curl -fs -L https://builds.r2.relay.so/meta/latest | awk -F '"' '{print $1}') \
         && wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php8.2-debian-x86-64%2Blibssl3.tar.gz" \
         && tar -xzf /tmp/relay.tar.gz -C /usr/src \
         && mv /usr/src/relay-* /usr/src/relay \
+        && rm /tmp/relay.tar.gz \
     ; \
     wget -O /tmp/newrelic.tar.gz https://download.newrelic.com$(curl -fs -L https://download.newrelic.com/php_agent/release/ | grep -Eo "/\S+-linux.tar.gz\"" | tr -d '"') \
         && tar -xzvf /tmp/newrelic.tar.gz -C /usr/src \
@@ -147,7 +152,8 @@ RUN cd /usr/src; \
         && touch /var/log/newrelic/newrelic-daemon.log \
         && chmod 666 /var/log/newrelic/newrelic-daemon.log \
         && touch /var/log/newrelic/php_agent.log \
-        && chmod 644 /var/log/newrelic/php_agent.log
+        && chmod 644 /var/log/newrelic/php_agent.log \
+        && rm /tmp/newrelic.tar.gz
 
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/
