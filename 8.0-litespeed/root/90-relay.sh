@@ -1,36 +1,28 @@
 #!/bin/bash
 
-# Installation of Relay
-RELAY=$(curl https://builds.r2.relay.so/meta/latest)
-PLATFORM=$(uname -m | sed 's/_/-/')
-RELAY_PHP=$(/usr/local/lsws/lsphp80/bin/php-config --version | cut -c -3) 
-RELAY_INI_DIR=$(/usr/local/lsws/lsphp80/bin/php-config --ini-dir)          
-RELAY_EXT_DIR=$(/usr/local/lsws/lsphp80/bin/php-config --extension-dir)    
+# Configure Relay
+RELAY_INI_DIR=$(/usr/local/lsws/lsphp80/bin/php-config --ini-dir)
+RELAY_EXT_DIR=$(/usr/local/lsws/lsphp80/bin/php-config --extension-dir)
+RELAY_INI="${RELAY_INI_DIR}60-relay.ini"
 
 # if $PHP_INI_DIR/60-relay.ini does not exist, cp relay.ini to $PHP_INI_DIR/60-relay.ini
+# Allow customizations outside of the defined env vars.
 if [ ! -f "$RELAY_INI_DIR/60-relay.ini" ]; then
-    cp "/usr/src/relay/relay-$RELAY-php$RELAY_PHP-debian-$PLATFORM+libssl3/relay.ini" "$RELAY_INI_DIR/60-relay.ini"
+    cp "/usr/src/relay/relay.ini" "$RELAY_INI_DIR/60-relay.ini"
 fi
 
-if [ ! -f "$RELAY_EXT_DIR/relay.so" ]; then
-    cp "/usr/src/relay/relay-$RELAY-php$RELAY_PHP-debian-$PLATFORM+libssl3/relay-pkg.so" "$RELAY_EXT_DIR/relay.so"
-fi
+cp "/usr/src/relay/relay-pkg.so" "$RELAY_EXT_DIR/relay.so"
 
-cp "/usr/src/relay/relay-$RELAY-php8.0-debian-$PLATFORM+libssl3/relay.ini" "$PHP_INI_DIR/60-relay.ini" 
-cp "/usr/src/relay/relay-$RELAY-php8.0-debian-$PLATFORM+libssl3/relay-pkg.so" "$PHP_EXT_DIR/relay.so"
+sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" "$RELAY_EXT_DIR/relay.so"
 
-sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" "$PHP_EXT_DIR/relay.so"
-
-# setting configuration;
-RELAY_INI="/usr/local/lsws/lsphp80/etc/php/8.0/litespeed/php.ini"
-
-if [ -z "$RELAY_LICENSE" ]; then
-    sed -i "s/^;\? \?relay.key =.*/relay.key = $RELAY_LICENSE/" $RELAY_INI
-    sed -i "s/^;\? \?relay.maxmemory =.*/relay.maxmemory = ${RELAY_MEMORY:-128M}/" $RELAY_INI
-else
+if [[ -z "${RELAY_LICENSE}" ]]; then
+    echo >&2 "No Relay License found."
     sed -i "s/^;\? \?relay.maxmemory =.*/relay.maxmemory = 32M/" $RELAY_INI
+else
+    echo >&2 "Relay License found."
+    sed -i "s/^;\? \?relay.key =.*/relay.key = $RELAY_LICENSE/" $RELAY_INI
+    sed -i "s/^;\? \?relay.maxmemory =.*/relay.maxmemory = ${RELAY_MEMORY:-128M}/" $RELAY_INI    
 fi
-
 
 sed -i "s/^;\? \?relay.environment =.*/relay.environment = ${RELAY_ENV:-production}/" $RELAY_INI
 sed -i "s/^;\? \?relay.maxmemory_pct =.*/relay.maxmemory_pct = ${RELAY_MEMORY_PCT:-75}/" $RELAY_INI

@@ -14,6 +14,7 @@ COPY root/40-ls-config.sh /etc/my_init.d/
 COPY root/50-entrypoint.sh /etc/my_init.d/
 COPY root/60-litespeed-upgrade.sh /etc/my_init.d/
 COPY root/60-php-config.sh /etc/my_init.d/
+COPY root/61-newrelic.sh /etc/my_init.d/
 COPY root/90-litespeed-password.sh /etc/my_init.d/
 COPY root/91-litespeed-config.sh /etc/my_init.d/
 COPY root/90-monarx-entry.sh /etc/my_init.d/
@@ -73,6 +74,9 @@ RUN set -ex; \
       inotify-tools \
       mailutils \
       apt-utils \
+      libzstd-dev \
+      liblzf-dev \
+      git \
     ; \
     echo "postfix postfix/mailname string docker.local" | debconf-set-selections \
     && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
@@ -94,8 +98,8 @@ RUN set -ex; \
       lsphp80-opcache \
       lsphp80-pear \
       lsphp80-pgsql \
-      lsphp80-redis \
       lsphp80-sqlite3 \
+      lsphp80-modules-source \
       php-cli \
       php-mysql \
       openlitespeed \
@@ -121,6 +125,31 @@ RUN set -ex; \
     apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN cd /usr/src; \
+    git clone https://github.com/phpredis/phpredis.git \
+        && cd /usr/src/phpredis \
+        && git checkout $(curl -fs -L https://api.github.com/repos/phpredis/phpredis/releases/latest | grep -i "tag_name" | awk -F '"' '{print $4}') \
+        && phpize \
+        && ./configure --enable-redis-igbinary --enable-redis-zstd --with-liblzf --enable-redis-msgpack \
+        && make \
+        && make install \
+    ; \
+    RELAY_VERSION=$(curl -fs -L https://builds.r2.relay.so/meta/latest | awk -F '"' '{print $1}') \
+        && wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php8.0-debian-x86-64%2Blibssl3.tar.gz" \
+        && tar -xzf /tmp/relay.tar.gz -C /usr/src \
+        && mv /usr/src/relay-* /usr/src/relay \
+    ; \
+    wget -O /tmp/newrelic.tar.gz https://download.newrelic.com$(curl -fs -L https://download.newrelic.com/php_agent/release/ | grep -Eo "/\S+-linux.tar.gz\"" | tr -d '"') \
+        && tar -xzvf /tmp/newrelic.tar.gz -C /usr/src \
+        && mv /usr/src/newrelic-php5-*-linux /usr/src/newrelic \
+        && mv /usr/src/newrelic/daemon/newrelic-daemon.x64 /usr/bin/newrelic-daemon \
+        && chown root: /usr/bin/newrelic-daemon \
+        && mkdir -p /var/log/newrelic \
+        && touch /var/log/newrelic/newrelic-daemon.log \
+        && chmod 666 /var/log/newrelic/newrelic-daemon.log \
+        && touch /var/log/newrelic/php_agent.log \
+        && chmod 644 /var/log/newrelic/php_agent.log
+
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/
 COPY root/pecl/install_mcrypt.sh /root/
@@ -141,7 +170,8 @@ RUN mkdir -p /etc/service/postfix \
     && chmod +x /etc/my_init.d/*.sh \
     && /usr/local/lsws/lsphp80/bin/pecl channel-update pecl.php.net \
     ; \
-    /root/install_mcrypt.sh \
+    chmod +x /root/install_mcrypt.sh \
+        && /root/install_mcrypt.sh \
     ; \
     echo "extension=mcrypt.so" >> /usr/local/lsws/lsphp80/etc/php/8.0/mods-available/50-mcrypt.ini \
     && rm /root/install_*.sh \
@@ -158,11 +188,6 @@ RUN mkdir -p /etc/service/postfix \
     && echo "post_max_size = 250M" >> /usr/src/lsws/lsphp80/etc/php/8.0/litespeed/php.ini \
     ; \
     usermod -u 1001 www-data && groupmod -g 1001 www-data
-
-RUN mkdir /usr/src/relay
-RUN RELAY_VERSION=$(curl -s https://builds.r2.relay.so/meta/latest) && \
-    wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php8.1-debian-x86-64%2Blibssl3.tar.gz"
-RUN tar -xzf /tmp/relay.tar.gz -C /usr/src/relay
 
 COPY root/lswsctrl.sh /usr/local/bin/lswsctrl
 COPY root/httpd_config.conf /usr/src/lsws/conf/httpd_config.conf

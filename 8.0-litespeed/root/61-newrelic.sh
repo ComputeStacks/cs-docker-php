@@ -1,8 +1,8 @@
 #!/bin/bash
 
-NR_PHP=$(/usr/local/lsws/lsphp81/bin/php-config --extension-dir | awk -F/ '{print $NF}') 
-NR_INI_DIR=$(/usr/local/lsws/lsphp81/bin/php-config --ini-dir)
-NR_EXT_DIR=$(/usr/local/lsws/lsphp81/bin/php-config --extension-dir)
+NR_PHP=$(/usr/local/lsws/lsphp80/bin/php-config --extension-dir | awk -F/ '{print $NF}') 
+NR_INI_DIR=$(/usr/local/lsws/lsphp80/bin/php-config --ini-dir)
+NR_EXT_DIR=$(/usr/local/lsws/lsphp80/bin/php-config --extension-dir)
 
 # Enable New Relic with -e NEW_RELIC_KEY="Your New Relic Key"
 if [[ -z "${NEW_RELIC_KEY}" ]]; then

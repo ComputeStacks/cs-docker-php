@@ -1,5 +1,12 @@
 # ComputeStacks PHP OpenLiteSpeed Changelog
 
+## 2023-May-1
+
+* PHP 8.{0,1,2}: Updated support for New Relic to include all recent php versions.
+* PHP 8.{0,1,2}: Added [Relay](https://relay.so) support. _([@douwezijlstra-frl](https://github.com/douwezijlstra-frl))_
+
+***
+
 ## 2023-Apr-25
 
 * PHP 8.1: PHP Redis now compiled with additional compression algorithms.

@@ -130,70 +130,63 @@ RUN set -ex; \
 RUN cd /usr/src; \
     git clone https://github.com/phpredis/phpredis.git \
         && cd /usr/src/phpredis \
-        && git checkout $(curl https://api.github.com/repos/phpredis/phpredis/releases/latest | grep -i "tag_name" | awk -F '"' '{print $4}') \
+        && git checkout $(curl -fs -L https://api.github.com/repos/phpredis/phpredis/releases/latest | grep -i "tag_name" | awk -F '"' '{print $4}') \
         && phpize \
         && ./configure --enable-redis-igbinary --enable-redis-zstd --with-liblzf --enable-redis-msgpack \
         && make \
-        && make install
-
-RUN cd /usr/src; \
-    wget -O /usr/src/newrelic.tar.gz https://download.newrelic.com$(curl -f -L https://download.newrelic.com/php_agent/release/ | grep -Eo "/\S+-linux.tar.gz\"" | tr -d '"') \
-    && tar -xzvf newrelic.tar.gz \
-    && mv newrelic-php5-*-linux newrelic \
-    && mv newrelic/daemon/newrelic-daemon.x64 /usr/bin/newrelic-daemon \
-    && chown root: /usr/bin/newrelic-daemon \
-    && mkdir -p /var/log/newrelic \
-    && touch /var/log/newrelic/newrelic-daemon.log \
-    && chmod 666 /var/log/newrelic/newrelic-daemon.log \
-    && touch /var/log/newrelic/php_agent.log \
-    && chmod 644 /var/log/newrelic/php_agent.log \
-    && rm newrelic.tar.gz
+        && make install \
+    ; \
+    RELAY_VERSION=$(curl -fs -L https://builds.r2.relay.so/meta/latest | awk -F '"' '{print $1}') \
+        && wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php8.1-debian-x86-64%2Blibssl3.tar.gz" \
+        && tar -xzf /tmp/relay.tar.gz -C /usr/src \
+        && mv /usr/src/relay-* /usr/src/relay \
+    ; \
+    wget -O /tmp/newrelic.tar.gz https://download.newrelic.com$(curl -fs -L https://download.newrelic.com/php_agent/release/ | grep -Eo "/\S+-linux.tar.gz\"" | tr -d '"') \
+        && tar -xzvf /tmp/newrelic.tar.gz -C /usr/src \
+        && mv /usr/src/newrelic-php5-*-linux /usr/src/newrelic \
+        && mv /usr/src/newrelic/daemon/newrelic-daemon.x64 /usr/bin/newrelic-daemon \
+        && chown root: /usr/bin/newrelic-daemon \
+        && mkdir -p /var/log/newrelic \
+        && touch /var/log/newrelic/newrelic-daemon.log \
+        && chmod 666 /var/log/newrelic/newrelic-daemon.log \
+        && touch /var/log/newrelic/php_agent.log \
+        && chmod 644 /var/log/newrelic/php_agent.log
 
 COPY root/www /usr/src/default/
 COPY root/vhosts /usr/local/lsws/conf/vhosts/
+ADD https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.zip /tmp/ioncube.zip
 
 RUN mkdir -p /etc/service/postfix \
-    && mkdir -p /etc/service/postfix-log \
-    && mv /tmp/postfix-run.sh /etc/service/postfix/run \
-    && mv /tmp/postfix-log-run.sh /etc/service/postfix-log/run \
-    && chmod +x /etc/service/postfix/run \
-    && chmod +x /etc/service/postfix-log/run \
-    && touch /etc/service/postfix/down \
-    && touch /etc/service/postfix-log/down \
+        && mkdir -p /etc/service/postfix-log \
+        && mv /tmp/postfix-run.sh /etc/service/postfix/run \
+        && mv /tmp/postfix-log-run.sh /etc/service/postfix-log/run \
+        && chmod +x /etc/service/postfix/run \
+        && chmod +x /etc/service/postfix-log/run \
+        && touch /etc/service/postfix/down \
+        && touch /etc/service/postfix-log/down \
     ; \
     cd /usr/local/lsws/fcgi-bin/ \
-    && rm lsphp \
-    && ln -s /usr/local/lsws/lsphp81/bin/lsphp lsphp \
-    && cd /usr/local/lsws/lsphp81/bin \
-    && chmod +x /etc/my_init.d/*.sh \
-    && rm /usr/local/lsws/conf/httpd_config.conf \
+        && rm lsphp \
+        && ln -s /usr/local/lsws/lsphp81/bin/lsphp lsphp \
+        && cd /usr/local/lsws/lsphp81/bin \
+        && chmod +x /etc/my_init.d/*.sh \
+        && rm /usr/local/lsws/conf/httpd_config.conf \
     ; \
     mv /usr/local/lsws /usr/src \
-    && chown -R lsadm:lsadm /usr/src/lsws/conf \
-    && echo "max_input_vars = 3000" >> /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
-    && sed -i 's/memory_limit = .*/memory_limit = 192M/g' /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
-    && sed -i 's/upload_max_filesize = .*/upload_max_filesize = 250M/g' /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
-    && sed -i 's/max_input_time = .*/max_input_time = 300/g' /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
-    && sed -i 's/max_execution_time = .*/max_execution_time = 300/g' /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
-    && echo "date.timezone = 'UTC'" >> /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
-    && echo "post_max_size = 250M" >> /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
+        && chown -R lsadm:lsadm /usr/src/lsws/conf \
+        && echo "max_input_vars = 3000" >> /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
+        && sed -i 's/memory_limit = .*/memory_limit = 192M/g' /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
+        && sed -i 's/upload_max_filesize = .*/upload_max_filesize = 250M/g' /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
+        && sed -i 's/max_input_time = .*/max_input_time = 300/g' /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
+        && sed -i 's/max_execution_time = .*/max_execution_time = 300/g' /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
+        && echo "date.timezone = 'UTC'" >> /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
+        && echo "post_max_size = 250M" >> /usr/src/lsws/lsphp81/etc/php/8.1/litespeed/php.ini \
     ; \
-    usermod -u 1001 www-data && groupmod -g 1001 www-data
-
-ADD https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.zip /tmp/ioncube.zip
-RUN unzip /tmp/ioncube.zip -d /usr/src/ \
-    && cp /usr/src/ioncube/ioncube_loader_lin_8.1.so /usr/src/lsws/lsphp81/lib/php/20210902/ \
-    && echo "zend_extension=ioncube_loader_lin_8.1.so" > /usr/src/lsws/lsphp81/etc/php/8.1/mods-available/ioncube.ini
-
-ARG RELAY_VERSION
-RUN RELAY_VERSION=$(curl -s https://builds.r2.relay.so/meta/latest)
-
-RUN mkdir /usr/src/relay
-RUN RELAY_VERSION=$(curl -s https://builds.r2.relay.so/meta/latest) && \
-    wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php8.1-debian-x86-64%2Blibssl3.tar.gz"
-RUN tar -xzf /tmp/relay.tar.gz -C /usr/src/relay
-    
-
+    usermod -u 1001 www-data && groupmod -g 1001 www-data \
+    ; \
+    unzip /tmp/ioncube.zip -d /usr/src/ \
+        && cp /usr/src/ioncube/ioncube_loader_lin_8.1.so /usr/src/lsws/lsphp81/lib/php/20210902/ \
+        && echo "zend_extension=ioncube_loader_lin_8.1.so" > /usr/src/lsws/lsphp81/etc/php/8.1/mods-available/ioncube.ini  
 
 COPY root/lswsctrl.sh /usr/local/bin/lswsctrl
 COPY root/httpd_config.conf /usr/src/lsws/conf/httpd_config.conf
