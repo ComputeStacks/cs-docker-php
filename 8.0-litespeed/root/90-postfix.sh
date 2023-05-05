@@ -71,8 +71,8 @@ EOF
 
 config_postfix() {  
   postfix_config > /etc/postfix/main.cf
-  if [ -z ${SMTP_DEFAULT_FROM_FQDN} ]; then
-    echo "No default from fqdn, skipping..."
+  if [ -z ${SMTP_DEFAULT_FROM_FQDN} ] && [ -z ${SMTP_FROM} ]; then
+    echo "No SMTP_DEFAULT_FROM_FQDN or SMTP_FROM, skipping alias..."
   else
     default_from > /etc/postfix/default_from
     postmap /etc/postfix/default_from

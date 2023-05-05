@@ -1,5 +1,11 @@
 # ComputeStacks PHP OpenLiteSpeed Changelog
 
+## 2023-May-4
+
+* Fix postfix alias.
+
+***
+
 ## 2023-May-1
 
 * PHP 8.{0,1,2}: Updated support for New Relic to include all recent php versions.
