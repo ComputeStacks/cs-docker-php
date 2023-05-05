@@ -1,5 +1,9 @@
 # ComputeStacks PHP OpenLiteSpeed Changelog
 
+## 2023-May-5
+
+* Tweak lsphp defaults.
+
 ## 2023-May-4
 
 * Fix postfix alias.
