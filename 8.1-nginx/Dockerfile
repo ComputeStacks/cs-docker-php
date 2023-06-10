@@ -1,4 +1,4 @@
-# Local dev: docker run --rm -it -e LS_ADMIN_PW=changeme -p 3000:80 -p 7080:7080 cmptstks/php:8.2-nginx /sbin/my_init -- bash -l  
+# Local dev: docker run --rm -it -p 3000:80 cmptstks/php:8.1-nginx /sbin/my_init -- bash -l  
 FROM ghcr.io/computestacks/cs-docker-base:ubuntu-jammy
 
 LABEL maintainer="https://computestacks.com"
