@@ -8,6 +8,7 @@ build-all:
     just build-php74
     just build-php80
     just build-php81
+    just build-php81nginx
     just build-php82
 
 # build php 7.3
@@ -29,6 +30,11 @@ build-php80:
 build-php81: 
     docker pull ghcr.io/computestacks/cs-docker-base:ubuntu-jammy
     @just --justfile {{ justfile() }} build-image "8.1-litespeed"
+
+# build php 8.1 nginx
+build-php81nginx:
+    docker pull ghcr.io/computestacks/cs-docker-base:ubuntu-jammy
+    @just --justfile {{ justfile() }} build-image "8.1-nginx"
 
 # build php 8.2
 build-php82:

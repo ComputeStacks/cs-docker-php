@@ -1,5 +1,9 @@
 # ComputeStacks PHP OpenLiteSpeed Changelog
 
+## 2023-June-10
+
+* Added nginx version of php 8.1 with php-fpm.
+
 ## 2023-May-5
 
 * Tweak lsphp defaults.
