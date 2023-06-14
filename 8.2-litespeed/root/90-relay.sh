@@ -13,8 +13,6 @@ fi
 
 cp "/usr/src/relay/relay-pkg.so" "$RELAY_EXT_DIR/relay.so"
 
-sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" "$RELAY_EXT_DIR/relay.so"
-
 if [[ -z "${RELAY_LICENSE}" ]]; then
     echo >&2 "No Relay License found."
     sed -i "s/^;\? \?relay.maxmemory =.*/relay.maxmemory = 32M/" $RELAY_INI

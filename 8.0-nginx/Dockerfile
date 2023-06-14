@@ -132,6 +132,7 @@ RUN cd /usr/src; \
         && wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php8.0-debian-x86-64%2Blibssl3.tar.gz" \
         && tar -xzf /tmp/relay.tar.gz -C /usr/src \
         && mv /usr/src/relay-* /usr/src/relay \
+        && sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" /usr/src/relay/relay-pkg.so \
         && rm /tmp/relay.tar.gz
 
 ADD conf/logrotate.conf /etc/logrotate.d/nginx-computestacks
