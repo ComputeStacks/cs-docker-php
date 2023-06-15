@@ -3,6 +3,7 @@
 ## 2023-June-15
 
 * Added nginx versions of php 7.4
+* Set generous default file upload limits to 100MB for nginx images.
 
 ## 2023-June-11
 
