@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MONARX_PHP_VERSION=81
+MONARX_PHP_VERSION=74
 PHP_INI_DIR=/etc/php/7.4/mods-available/
 PHP_EXT_DIR=$(/usr/bin/php-config --extension-dir)
 
