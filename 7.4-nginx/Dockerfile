@@ -181,4 +181,7 @@ RUN chmod +x /etc/service/php-fpm/run \
 
 ADD conf/monarx-agent.conf /etc/monarx-agent.conf
 
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD curl --head --fail http://localhost/healthcheck || exit 1
+
 EXPOSE 80
