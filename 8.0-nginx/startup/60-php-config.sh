@@ -85,10 +85,3 @@ if [ -z ${PHP_LOG_ERRORS} ]; then
 else
   sed -i "s/log_errors=.*/log_errors=$PHP_LOG_ERRORS/g" "${PHP_INI_PATH}php.ini"
 fi
-
-# add file_uploads bool
-if [ -z ${PHP_FILE_UPLOADS} ]; then
-  echo >&2 "PHP_FILE_UPLOADS not set, skipping..."
-else
-  sed -i "s/file_uploads =.*/file_uploads = $PHP_FILE_UPLOADS/g" "${PHP_INI_PATH}php.ini"
-fi
