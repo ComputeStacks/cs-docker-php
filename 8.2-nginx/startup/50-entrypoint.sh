@@ -11,14 +11,6 @@ if ! [ "$(ls -A /var/www/html)" ]; then
   chown -R www-data:www-data /var/www
   echo >&2 "Complete! Sample files have been successfully copied to /var/www/"
 else
-  if [ ! -d /var/www/nginx ]; then
-    mkdir -p /var/www/nginx
-    chown -R www-data:www-data /var/www/nginx
-  fi
-  if [ ! -d /var/www/logs ]; then
-    mkdir -p /var/www/logs
-    chown -R www-data:www-data /var/www/logs
-  fi
   if [ -f /var/www/nginx/site.conf ]; then
     cp /var/www/nginx/site.conf /etc/nginx/sites-available/default
   fi
