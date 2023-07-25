@@ -42,3 +42,11 @@ else
   fi
 fi
 
+if [ ! -d /var/www/nginx ]; then
+  mkdir -p /var/www/nginx
+  chown -R www-data:www-data /var/www/nginx
+fi
+if [ ! -d /var/www/logs ]; then
+  mkdir -p /var/www/logs
+  chown -R www-data:www-data /var/www/logs
+fi

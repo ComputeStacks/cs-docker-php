@@ -1,10 +1,6 @@
-# ComputeStacks PHP OpenLiteSpeed Images
+# ComputeStacks PHP Images
 
-* [![PHP 8.2](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-2.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-2.yml)
-* [![PHP 8.1](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-1.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-1.yml)
-* [![PHP 8.0](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-0.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-0.yml)
-* [![PHP 7.4](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php7-4.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php7-4.yml)
-* [![PHP 7.3](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php7-3.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php7-3.yml)
+We are currently maintaining two variants: OpenLiteSpeed and nginx with PHP-FPM. 
 
 ## Submitting Issues
 

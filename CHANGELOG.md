@@ -1,5 +1,14 @@
 # ComputeStacks PHP OpenLiteSpeed Changelog
 
+## 2023-June-15
+
+* Added nginx versions of php 7.4
+* Set generous default file upload limits to 100MB for nginx images.
+
+## 2023-June-11
+
+* Added nginx versions of php 8.0 and 8.2.
+
 ## 2023-June-10
 
 * Added nginx version of php 8.1 with php-fpm.
