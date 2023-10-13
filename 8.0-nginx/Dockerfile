@@ -92,6 +92,7 @@ RUN set -ex; \
       php8.0-protobuf \
       php8.0-xml \
       php8.0-xmlrpc \
+      php8.0-soap \
       php8.0-zip \
       php8.0-zstd \
       rcs \
