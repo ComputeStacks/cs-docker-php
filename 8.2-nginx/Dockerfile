@@ -88,6 +88,7 @@ RUN set -ex; \
       php8.2-mbstring \
       php8.2-mcrypt \
       php8.2-mysql \
+      php8.2-pgsql \
       php8.2-opcache \
       php8.2-protobuf \
       php8.2-xml \
