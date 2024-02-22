@@ -1,4 +1,10 @@
-# ComputeStacks PHP OpenLiteSpeed Changelog
+# ComputeStacks PHP Changelog
+
+## 2024-feb-22
+
+* Added metadata env variables to php7.4+ images.
+* nginx images have better config file management to allow users to keep their configurations up to date more easily.
+* fixed broken monarx installation on nginx 8.2.
 
 ## 2023-June-15
 

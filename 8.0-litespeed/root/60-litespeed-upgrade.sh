@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
+
 
 if [ ! -d /usr/src/lsws ]; then
   echo "/usr/src/lsws does not exist, exiting upgrade process."

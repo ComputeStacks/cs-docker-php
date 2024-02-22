@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
+
 
 NR_PHP_VERSION=$(/usr/local/bin/php-config --version | awk -F '[.]' '{print $1 "." $2}')
 NR_PHP=$(/usr/local/bin/php-config --extension-dir | awk -F/ '{print $NF}') 

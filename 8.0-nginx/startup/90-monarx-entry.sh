@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
 
 MONARX_PHP_VERSION=80
 PHP_INI_DIR=/etc/php/8.0/mods-available/

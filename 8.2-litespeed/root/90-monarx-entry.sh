@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
 
 MONARX_PHP_VERSION=$(/usr/local/bin/php-config --version | awk -F '[.]' '{print $1 $2}')
 PHP_INI_DIR=$(/usr/local/bin/php-config --ini-dir)

@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
+
 
 if [[ -z "${LS_ADMIN_PW}" ]]; then
   echo >&2 "Litespeed admin password not set, leaving default of 123456."

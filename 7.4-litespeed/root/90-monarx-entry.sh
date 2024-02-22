@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
+
 
 if [ -z ${MONARX_ID} ] || [ -z ${MONARX_SECRET} ]; then
   echo >&2 "MONARX_ID or MONARX_SECRET not set, disabling monarx."

@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
+
 echo >&2 "Updating litespeed configuration..."
 
 if grep -Fq 'errorlog' /usr/local/lsws/conf/vhosts/Default/vhconf.conf; then

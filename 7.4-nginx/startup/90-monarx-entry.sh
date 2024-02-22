@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
+
 
 MONARX_PHP_VERSION=74
 PHP_INI_DIR=/etc/php/7.4/mods-available/

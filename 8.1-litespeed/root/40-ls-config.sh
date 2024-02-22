@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
 
 if ! [ "$(ls -A /usr/local/lsws)" ]; then
   echo >&2 "OpenLiteSpeed not configured, setting configuration..."

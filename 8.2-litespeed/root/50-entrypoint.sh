@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-set -euo pipefail
+set -e
+
 
 if ! [ "$(ls -A /var/www)" ]; then
   echo >&2 "No files found in volume - copying default files..."

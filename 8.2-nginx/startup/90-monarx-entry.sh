@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-MONARX_PHP_VERSION=81
+set -e
+
+MONARX_PHP_VERSION=82
 PHP_INI_DIR=/etc/php/8.2/mods-available/
 PHP_EXT_DIR=$(/usr/bin/php-config --extension-dir)
 

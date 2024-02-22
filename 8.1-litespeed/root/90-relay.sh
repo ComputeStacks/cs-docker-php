@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
 
 # Configure Relay
 RELAY_INI_DIR=$(/usr/local/bin/php-config --ini-dir)

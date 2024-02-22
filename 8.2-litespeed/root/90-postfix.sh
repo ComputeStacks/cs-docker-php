@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
+
 
 # Environmental variables:
 #  * SMTP_USERNAME
