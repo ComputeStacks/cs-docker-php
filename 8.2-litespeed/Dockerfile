@@ -12,6 +12,7 @@ COPY root/postfix-run.sh /tmp/
 COPY root/postfix-log-run.sh /tmp/
 COPY root/40-ls-config.sh /etc/my_init.d/
 COPY root/50-entrypoint.sh /etc/my_init.d/
+COPY root/51-ls-env.sh /etc/my_init.d/
 COPY root/60-litespeed-upgrade.sh /etc/my_init.d/
 COPY root/60-php-config.sh /etc/my_init.d/
 COPY root/61-newrelic.sh /etc/my_init.d/
