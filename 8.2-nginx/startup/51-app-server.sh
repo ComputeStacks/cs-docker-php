@@ -59,7 +59,7 @@ sed -i "s/env\[CS_AUTH_KEY\] = .*/env\[CS_AUTH_KEY\] = '$CS_AUTH_KEY'/g" $FPM_PO
 if [ -z ${METADATA_SERVICE} ]; then
   echo >&2 "METADATA_SERVICE not set."
 else
-  sed -i "s/env\[METADATA_SERVICE\] = .*/env\[METADATA_SERVICE\] = '$METADATA_SERVICE'/g" $FPM_POOL_CONF
+  sed -i "s|env\[METADATA_SERVICE\] = .*|env\[METADATA_SERVICE\] = '$METADATA_SERVICE'|g" $FPM_POOL_CONF
 fi
 if [ -z ${METADATA_AUTH} ]; then
   echo >&2 "METADATA_AUTH not set."
