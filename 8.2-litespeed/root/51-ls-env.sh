@@ -18,7 +18,7 @@ grep -q -e 'CS_AUTH_KEY' /usr/local/lsws/conf/httpd_config.conf || sed -i "/extp
 if [ -z ${METADATA_SERVICE} ]; then
   echo >&2 "METADATA_SERVICE not set."
 else
-  sed -i "s/METADATA_SERVICE=.*/METADATA_SERVICE=$METADATA_SERVICE/g" /usr/local/lsws/conf/httpd_config.conf
+  sed -i "s|METADATA_SERVICE=.*|METADATA_SERVICE=$METADATA_SERVICE|g" /usr/local/lsws/conf/httpd_config.conf
   grep -q -e 'METADATA_SERVICE' /usr/local/lsws/conf/httpd_config.conf || sed -i "/extprocessor lsphp/a  env                     METADATA_SERVICE=$METADATA_SERVICE" /usr/local/lsws/conf/httpd_config.conf
 fi
 
