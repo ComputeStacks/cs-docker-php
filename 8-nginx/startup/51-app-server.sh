@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
-FPM_POOL_CONF=/etc/php/8.2/fpm/pool.d/www.conf
+FPM_POOL_CONF=/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 
 ##
 #  Store original configuration files under /opt. This lets us always keep the user's

@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-set -e
-
-MONARX_PHP_VERSION=82
-PHP_INI_DIR=/etc/php/8.2/mods-available/
+MONARX_PHP_VERSION=$(echo $PHP_VERSION | awk '{split($0,i,".");print i[1] i[2]}')
+PHP_INI_DIR=/etc/php/${PHP_VERSION}/mods-available/
 PHP_EXT_DIR=$(/usr/bin/php-config --extension-dir)
 
 if [ ! -f "/usr/lib/monarx-protect/monarxprotect-php${MONARX_PHP_VERSION}.so" ]; then

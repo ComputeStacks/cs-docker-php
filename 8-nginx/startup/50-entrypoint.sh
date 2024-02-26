@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+if [ -z ${PHP_VERSION} ]; then
+  echo >&2 "Missing PHP Version, halting."
+  exit 1
+fi
 
-FPM_POOL_CONF=/etc/php/8.2/fpm/pool.d/www.conf
+FPM_POOL_CONF=/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+
+if [ ! -f "$FPM_POOL_CONF" ]; then
+  echo >&2 "Missing PHP FPM Pool Configuration File, halting."
+  exit 1
+fi
 
 if ! [ "$(ls -A /var/www/html)" ]; then
   echo >&2 "No files found in volume - copying default files..."

@@ -2,6 +2,8 @@ FROM ghcr.io/computestacks/cs-docker-base:ubuntu-jammy
 
 ARG php_version="8.2"
 
+ENV PHP_VERSION=$php_version
+
 LABEL maintainer="https://computestacks.com"
 LABEL org.opencontainers.image.authors="https://computestacks.com"
 LABEL org.opencontainers.image.source="https://github.com/ComputeStacks/cs-docker-php/tree/main/8-nginx"

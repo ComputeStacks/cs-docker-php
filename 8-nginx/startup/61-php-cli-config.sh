@@ -1,8 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+PHP_INI_PATH=/etc/php/${PHP_VERSION}/cli/
+
+if [ ! -d "$PHP_INI_PATH" ]; then
+  echo >&2 "Missing PHP CLI INI Path, halting."
+  exit 0
+fi
 
 echo >&2 "Setting PHP tunables..."
-
-PHP_INI_PATH=/etc/php/8.2/cli/
 
 sed -i 's/^;\? \?cgi.fix_pathinfo=.*/cgi.fix_pathinfo=0/g' ${PHP_INI_PATH}php.ini
 

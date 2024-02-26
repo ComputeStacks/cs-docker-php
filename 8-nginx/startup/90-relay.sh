@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Configure Relay
-RELAY_INI_DIR=/etc/php/8.2/mods-available/
+RELAY_INI_DIR=/etc/php/${PHP_VERSION}/mods-available/
 RELAY_EXT_DIR=$(/usr/bin/php-config --extension-dir)
 RELAY_INI="${RELAY_INI_DIR}relay.ini"
 

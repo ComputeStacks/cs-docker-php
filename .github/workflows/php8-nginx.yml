@@ -67,8 +67,7 @@ jobs:
           build_args: |
             php_version=${{ php_version }}
           tags: |
-            cmptstks/php:8.2-nginx
-            ghcr.io/${{ env.GH_REPO }}:8.2-nginx
+            ghcr.io/${{ env.GH_REPO }}:202402-8.2-nginx
             ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
