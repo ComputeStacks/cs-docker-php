@@ -106,11 +106,13 @@ RUN set -ex; \
     ; \
     mkdir -p /var/www && mkdir /usr/src/default \
     ; \
-    curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | gpg -o /usr/share/keyrings/monarx-archive-keyring.gpg --dearmor \
-    && echo "deb [signed-by=/usr/share/keyrings/monarx-archive-keyring.gpg] https://repository.monarx.com/repository/ubuntu-jammy/ jammy main" > /etc/apt/sources.list.d/monarx.list \
-    ; \
-    apt-get update \
-    && apt-get -y install monarx-agent monarx-protect \
+    if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
+        curl https://repository.monarx.com/repository/monarx/publickey/monarxpub.gpg | gpg -o /usr/share/keyrings/monarx-archive-keyring.gpg --dearmor \
+        && echo "deb [signed-by=/usr/share/keyrings/monarx-archive-keyring.gpg] https://repository.monarx.com/repository/ubuntu-jammy/ jammy main" > /etc/apt/sources.list.d/monarx.list \
+        ; \
+        apt-get update \
+        && apt-get -y install monarx-agent monarx-protect; \
+    fi \
     ; \
     mkdir -p /etc/service/php-fpm \
         && mkdir -p /etc/service/postfix \
@@ -133,8 +135,14 @@ RUN cd /usr/src; \
         && echo "extension=redis.so" > /etc/php/$php_version/mods-available/redis.ini \
         && /usr/sbin/phpenmod redis \
     ; \
+    if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
+        RELAY_ARCH="x86-64"; \
+    else \
+        RELAY_ARCH="aarch64"; \
+    fi \
+    ; \
     RELAY_VERSION=$(curl -fs -L https://builds.r2.relay.so/meta/latest | awk -F '"' '{print $1}') \
-        && wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php${php_version}-debian-x86-64%2Blibssl3.tar.gz" \
+        && wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/${RELAY_VERSION}/relay-${RELAY_VERSION}-php${php_version}-debian-${RELAY_ARCH}%2Blibssl3.tar.gz" \
         && tar -xzf /tmp/relay.tar.gz -C /usr/src \
         && mv /usr/src/relay-* /usr/src/relay \
         && sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" /usr/src/relay/relay-pkg.so \

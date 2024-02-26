@@ -1,5 +1,14 @@
 # ComputeStacks PHP Changelog
 
+## 2024-feb-26
+
+### PHP 8-nginx images
+* Consolidated php8-nginx images into a single directory and dockerfile.
+* Added a test to the github actions build
+* Build arm images
+
+***
+
 ## 2024-feb-22
 
 * Added metadata env variables to php7.4+ images.

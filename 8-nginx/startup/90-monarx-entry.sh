@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+if [ ! -f /usr/bin/monarx-agen ]; then
+  echo >&2 "Monarx binary not found, disabling monarx service."
+   if [ ! -f /etc/service/monarx/down ]; then
+    touch /etc/service/monarx/down
+  fi
+  exit 0
+fi
+
 MONARX_PHP_VERSION=$(echo $PHP_VERSION | awk '{split($0,i,".");print i[1] i[2]}')
 PHP_INI_DIR=/etc/php/${PHP_VERSION}/mods-available/
 PHP_EXT_DIR=$(/usr/bin/php-config --extension-dir)

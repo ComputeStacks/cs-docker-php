@@ -1,5 +1,7 @@
 # ComputeStacks PHP Images
 
+[![PHP 8 nginx](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-nginx.yml/badge.svg?branch=main)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-nginx.yml)
+
 We are currently maintaining two variants: OpenLiteSpeed and nginx with PHP-FPM. 
 
 ## Submitting Issues

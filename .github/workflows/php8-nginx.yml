@@ -2,8 +2,8 @@ name: "PHP 8 nginx"
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: '35 22 * * 2'
+  schedule:
+    - cron: '35 22 * * 2'
   # push:
   #   branches: [ "main" ]
   #   paths:
