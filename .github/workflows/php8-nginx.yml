@@ -68,7 +68,6 @@ jobs:
             php_version=${{ matrix.php_version }}
           tags: |
             ghcr.io/${{ env.GH_REPO }}:202402-8.2-nginx
-            ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
