@@ -33,7 +33,7 @@ jobs:
 
       # - name: Set up QEMU
       #   uses: docker/setup-qemu-action@v3
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -60,12 +60,29 @@ jobs:
           tags: |
             ${{ matrix.php_version }}-nginx
 
+
+      - name: Build and prepare to test
+        uses: docker/build-push-action@v5
+        with:
+          context: 8-nginx/
+          platforms: linux/amd64,linux/arm64
+          load: true
+          build-args: |
+            php_version=${{ matrix.php_version }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Test container image
+        run: |
+          docker run --rm -name=testphp${{ matrix.php_version }} -d -e CS_AUTH_KEY=FcUpBTaoi746JbAdhWqJwtmXC0en1M3u -e METADATA_SERVICE=http://localhost -e METADATA_AUTH=foobar123 \
+            && bash scripts/container-health.sh testphp${{ matrix.php_version }}
+
       - name: Build and push
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
           context: 8-nginx/
-          # platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           build-args: |
             php_version=${{ matrix.php_version }}
