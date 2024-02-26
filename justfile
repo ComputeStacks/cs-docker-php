@@ -45,7 +45,7 @@ build-php80:
 # build php 8.0 nginx
 build-php80nginx:
     docker pull ghcr.io/computestacks/cs-docker-base:ubuntu-jammy
-    @just --justfile {{ justfile() }} build-image "8.0-nginx"
+    @just --justfile {{ justfile() }} build-8-image "8.0"
 
 # build php 8.1
 build-php81: 
@@ -55,7 +55,7 @@ build-php81:
 # build php 8.1 nginx
 build-php81nginx:
     docker pull ghcr.io/computestacks/cs-docker-base:ubuntu-jammy
-    @just --justfile {{ justfile() }} build-image "8.1-nginx"
+    @just --justfile {{ justfile() }} build-8-image "8.1"
 
 # build php 8.2
 build-php82:
@@ -65,7 +65,10 @@ build-php82:
 # build php 8.2 nginx
 build-php82nginx:
     docker pull ghcr.io/computestacks/cs-docker-base:ubuntu-jammy
-    @just --justfile {{ justfile() }} build-image "8.2-nginx"
+    @just --justfile {{ justfile() }} build-8-image "8.2"
 
 build-image image:
     docker build -t ghcr.io/computestacks/cs-docker-php:{{ image }} {{ image }}/
+
+build-8-image php_version:
+    docker build --build-arg php_version={{ php_version }} -t ghcr.io/computestacks/cs-docker-php:{{ php_version }}-nginx 8-nginx/
