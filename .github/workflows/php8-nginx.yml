@@ -65,7 +65,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: 8-nginx/
-          platforms: linux/amd64,linux/arm64
           load: true
           build-args: |
             php_version=${{ matrix.php_version }}
@@ -74,7 +73,7 @@ jobs:
 
       - name: Test container image
         run: |
-          docker run --rm -name=testphp${{ matrix.php_version }} -d -e CS_AUTH_KEY=FcUpBTaoi746JbAdhWqJwtmXC0en1M3u -e METADATA_SERVICE=http://localhost -e METADATA_AUTH=foobar123 \
+          docker run --rm -name=testphp${{ matrix.php_version }} -d -e CS_AUTH_KEY=FcUpBTaoi746JbAdhWqJwtmXC0en1M3u -e METADATA_SERVICE=http://localhost -e METADATA_AUTH=foobar123 ghcr.io/${{ env.GH_REPO }}:${{ matrix.php_version }}-nginx \
             && bash scripts/container-health.sh testphp${{ matrix.php_version }}
 
       - name: Build and push
