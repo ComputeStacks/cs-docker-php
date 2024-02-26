@@ -65,7 +65,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           build_args: |
-            php_version=${{ php_version }}
+            php_version=${{ matrix.php_version }}
           tags: |
             ghcr.io/${{ env.GH_REPO }}:202402-8.2-nginx
             ${{ steps.meta.outputs.tags }}
