@@ -66,7 +66,7 @@ jobs:
           context: 8-nginx/
           # platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
-          build_args: |
+          build-args: |
             php_version=${{ matrix.php_version }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
