@@ -74,7 +74,7 @@ jobs:
       - name: Test container image
         run: |
           docker run --rm --name=testphp${{ matrix.php_version }} -d -e CS_AUTH_KEY=FcUpBTaoi746JbAdhWqJwtmXC0en1M3u -e METADATA_SERVICE=http://localhost -e METADATA_AUTH=foobar123 ghcr.io/${{ env.GH_REPO }}:${{ matrix.php_version }}-nginx \
-            && bash ${{ GITHUB_WORKSPACE }}/scripts/container-health.sh testphp${{ matrix.php_version }}
+            && bash ./scripts/container-health.sh testphp${{ matrix.php_version }}
 
       - name: Build and push
         id: build-and-push
