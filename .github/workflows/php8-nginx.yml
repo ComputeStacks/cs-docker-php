@@ -31,10 +31,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v3
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
 
       - name: Log into Github Registry
         if: github.event_name != 'pull_request'
@@ -55,19 +55,20 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ env.GH_REPO }}:${{ matrix.php_version }}-nginx
+          images: ghcr.io/${{ env.GH_REPO }}
+          tags: |
+            ${{ php_version }}-nginx
 
       - name: Build and push
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
           context: 8-nginx/
-          platforms: linux/amd64,linux/arm64
+          # platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           build_args: |
             php_version=${{ matrix.php_version }}
-          tags: |
-            ghcr.io/${{ env.GH_REPO }}:202402-8.2-nginx
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
