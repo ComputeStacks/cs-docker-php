@@ -57,7 +57,7 @@ jobs:
         with:
           images: ghcr.io/${{ env.GH_REPO }}
           tags: |
-            ${{ php_version }}-nginx
+            ${{ matrix.php_version }}-nginx
 
       - name: Build and push
         id: build-and-push
