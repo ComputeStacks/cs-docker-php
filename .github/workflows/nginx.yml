@@ -49,7 +49,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: images: ${{ matrix.image }}
+          images: ${{ matrix.image }}
           tags: |
             ${{ matrix.php_version }}-nginx
 

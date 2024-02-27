@@ -45,7 +45,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: images: ${{ matrix.image }}
+          images: ${{ matrix.image }}
           tags: |
             7.4-litespeed
 
