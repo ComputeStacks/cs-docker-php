@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        php_version: [ "7.3", "7.4" ]
+        php_version: [ "7.4" ]
         image: [ "ghcr.io/computestacks/cs-docker-php", "cmptstks/php" ]
     runs-on: ubuntu-latest
     permissions:
