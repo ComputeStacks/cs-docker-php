@@ -13,8 +13,25 @@ jobs:
   build:
     strategy:
       matrix:
-        php_version: [ "8.0", "8.1", "8.2" ]
-        image: [ "ghcr.io/computestacks/cs-docker-php", "cmptstks/php" ]
+        include:
+          - php_version: "8.0"
+            lsphp_version: "80"
+            image: "ghcr.io/computestacks/cs-docker-php"
+          - php_version: "8.0"
+            lsphp_version: "80"
+            image: "cmptstks/php"
+          - php_version: "8.1"
+            lsphp_version: "81"
+            image: "ghcr.io/computestacks/cs-docker-php"
+          - php_version: "8.2"
+            lsphp_version: "82"
+            image: "ghcr.io/computestacks/cs-docker-php"
+          - php_version: "8.1"
+            lsphp_version: "81"
+            image: "cmptstks/php"
+          - php_version: "8.2"
+            lsphp_version: "82"
+            image: "cmptstks/php"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -57,6 +74,7 @@ jobs:
           load: true
           build-args: |
             php_version=${{ matrix.php_version }}
+            lsphp_version=${{ matrix.lsphp_version }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -75,6 +93,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           build-args: |
             php_version=${{ matrix.php_version }}
+            lsphp_version=${{ matrix.lsphp_version }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
