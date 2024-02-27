@@ -1,3 +1,2 @@
-MAILTO=""
 # Place your cron jobs here.
 # */5 * * * * www-data /usr/bin/php /var/www/html/cron.php 2>&1 | logger -t myapp -p cron.err
