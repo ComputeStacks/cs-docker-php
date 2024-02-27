@@ -3,7 +3,7 @@ name: "PHP nginx"
 on:
   workflow_dispatch:
   schedule:
-    - cron: '35 22 * * 2'
+    - cron: '35 20 * * 2'
 
 env:
   # The default repo env will be 'ComputeStacks'; uppercase is not allowed.

@@ -3,7 +3,7 @@ name: "Litespeed 8"
 on:
   workflow_dispatch:
   schedule:
-    - cron: '35 23 * * 2'
+    - cron: '35 21 * * 2'
 
 env:
   # The default repo env will be 'ComputeStacks'; uppercase is not allowed.

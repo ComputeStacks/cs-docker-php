@@ -1,9 +1,9 @@
-name: "PHP 7.4 OLS"
+name: "Litespeed 7"
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '35 20 * * 2'
+    - cron: '35 22 * * 2'
 
 env:
   # The default repo env will be 'ComputeStacks'; uppercase is not allowed.
@@ -13,6 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
+        php_version: [ "7.3", "7.4" ]
         image: [ "ghcr.io/computestacks/cs-docker-php", "cmptstks/php" ]
     runs-on: ubuntu-latest
     permissions:
@@ -47,12 +48,12 @@ jobs:
         with:
           images: ${{ matrix.image }}
           tags: |
-            7.4-litespeed
+            ${{ matrix.php_version }}-litespeed
 
       - name: Build and prepare to test
         uses: docker/build-push-action@v5
         with:
-          context: litespeed/7.4/
+          context: litespeed/${{ matrix.php_version }}/
           load: true
           build-args: |
             php_version=${{ matrix.php_version }}
@@ -61,16 +62,16 @@ jobs:
 
       - name: Test container image
         run: >
-          docker run --name=testphp74 -d \
+          docker run --name=testphp -d \
             -e CS_AUTH_KEY=FcUpBTaoi746JbAdhWqJwtmXC0en1M3u -e METADATA_SERVICE=http://localhost \
-            -e METADATA_AUTH=foobar123 -e LS_ADMIN_PW=ch3ngm3 ${{ matrix.image }}:7.4-litespeed
-          bash ./scripts/container-health.sh testphp74
+            -e METADATA_AUTH=foobar123 -e LS_ADMIN_PW=ch3ngm3 ${{ matrix.image }}:${{ matrix.php_version }}-litespeed
+          bash ./scripts/container-health.sh testphp
 
       - name: Build and push
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
-          context: litespeed/7.4/
+          context: litespeed/${{ matrix.php_version }}/
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

@@ -4,7 +4,7 @@
 
 [![Litespeed 8](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/litespeed-8.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/litespeed-8.yml)
 
-[![PHP 7.4 OLS](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php7-4.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php7-4.yml)
+[![Litespeed 7](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/litespeed-7.yml/badge.svg)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/litespeed-7.yml)
 
 Our OpenLiteSpeed images are deprecated and will only be receiving security updates. Please migrate to our nginx images.
 
