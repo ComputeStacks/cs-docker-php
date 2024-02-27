@@ -1,9 +1,9 @@
-name: "PHP 7.4 OLS"
+name: "PHP nginx"
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '35 20 * * 2'
+    - cron: '35 22 * * 2'
 
 env:
   # The default repo env will be 'ComputeStacks'; uppercase is not allowed.
@@ -13,6 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
+        php_version: [ "7.4", "8.0", "8.1", "8.2" ]
         image: [ "ghcr.io/computestacks/cs-docker-php", "cmptstks/php" ]
     runs-on: ubuntu-latest
     permissions:
@@ -22,6 +23,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -47,12 +51,13 @@ jobs:
         with:
           images: images: ${{ matrix.image }}
           tags: |
-            7.4-litespeed
+            ${{ matrix.php_version }}-nginx
+
 
       - name: Build and prepare to test
         uses: docker/build-push-action@v5
         with:
-          context: litespeed/7.4/
+          context: nginx/
           load: true
           build-args: |
             php_version=${{ matrix.php_version }}
@@ -61,17 +66,20 @@ jobs:
 
       - name: Test container image
         run: >
-          docker run --rm --name=testphp74 -d \
+          docker run --rm --name=testphp${{ matrix.php_version }} -d \
             -e CS_AUTH_KEY=FcUpBTaoi746JbAdhWqJwtmXC0en1M3u -e METADATA_SERVICE=http://localhost \
-            -e METADATA_AUTH=foobar123 ${{ matrix.image }}:7.4-litespeed
-          bash ./scripts/container-health.sh testphp74
+            -e METADATA_AUTH=foobar123 ${{ matrix.image }}:${{ matrix.php_version }}-nginx
+          bash ./scripts/container-health.sh testphp${{ matrix.php_version }}
 
       - name: Build and push
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
-          context: litespeed/7.4/
+          context: nginx/
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
+          build-args: |
+            php_version=${{ matrix.php_version }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

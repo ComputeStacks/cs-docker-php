@@ -2,7 +2,7 @@
 
 [![PHP 8 nginx](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-nginx.yml/badge.svg?branch=main)](https://github.com/ComputeStacks/cs-docker-php/actions/workflows/php8-nginx.yml)
 
-We are currently maintaining two variants: OpenLiteSpeed and nginx with PHP-FPM. 
+Our OpenLiteSpeed images are deprecated and will only be receiving security updates. Please migrate to our nginx images.
 
 ## Submitting Issues
 
