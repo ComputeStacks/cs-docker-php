@@ -66,7 +66,7 @@ jobs:
 
       - name: Test container image
         run: >
-          docker run --rm --name=testphp${{ matrix.php_version }} -d \
+          docker run --name=testphp${{ matrix.php_version }} -d \
             -e CS_AUTH_KEY=FcUpBTaoi746JbAdhWqJwtmXC0en1M3u -e METADATA_SERVICE=http://localhost \
             -e METADATA_AUTH=foobar123 ${{ matrix.image }}:${{ matrix.php_version }}-nginx
           bash ./scripts/container-health.sh testphp${{ matrix.php_version }}

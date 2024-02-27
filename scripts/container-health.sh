@@ -30,3 +30,5 @@ do
   i=$((i+1))
 
 done
+
+exit 1
