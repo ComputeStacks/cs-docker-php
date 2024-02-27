@@ -1,9 +1,9 @@
-name: "Litespeed 8"
+name: "Litespeed 8.0"
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '35 21 * * 2'
+    - cron: '35 23 * * 2'
 
 env:
   # The default repo env will be 'ComputeStacks'; uppercase is not allowed.
@@ -13,18 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-          - php_version: "8.1"
-            lsphp_version: "81"
-            image: "ghcr.io/computestacks/cs-docker-php"
-          - php_version: "8.2"
-            lsphp_version: "82"
-            image: "ghcr.io/computestacks/cs-docker-php"
-          - php_version: "8.1"
-            lsphp_version: "81"
-            image: "cmptstks/php"
-          - php_version: "8.2"
-            lsphp_version: "82"
-            image: "cmptstks/php"
+        image: [ "ghcr.io/computestacks/cs-docker-php", "cmptstks/php" ]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -58,35 +47,29 @@ jobs:
         with:
           images: ${{ matrix.image }}
           tags: |
-            ${{ matrix.php_version }}-litespeed
+            8.0-litespeed
 
       - name: Build and prepare to test
         uses: docker/build-push-action@v5
         with:
-          context: litespeed/8/
+          context: litespeed/8.0/
           load: true
-          build-args: |
-            php_version=${{ matrix.php_version }}
-            lsphp_version=${{ matrix.lsphp_version }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Test container image
         run: >
-          docker run --name=testphp${{ matrix.php_version }} -d \
+          docker run --name=testphp -d \
             -e CS_AUTH_KEY=FcUpBTaoi746JbAdhWqJwtmXC0en1M3u -e METADATA_SERVICE=http://localhost \
-            -e METADATA_AUTH=foobar123 -e LS_ADMIN_PW=ch3ngm3 ${{ matrix.image }}:${{ matrix.php_version }}-litespeed
-          bash ./scripts/container-health.sh testphp${{ matrix.php_version }}
+            -e METADATA_AUTH=foobar123 -e LS_ADMIN_PW=ch3ngm3 ${{ matrix.image }}:8.0-litespeed
+          bash ./scripts/container-health.sh testphp
 
       - name: Build and push
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
-          context: litespeed/8/
+          context: litespeed/8.0/
           push: ${{ github.event_name != 'pull_request' }}
-          build-args: |
-            php_version=${{ matrix.php_version }}
-            lsphp_version=${{ matrix.lsphp_version }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
