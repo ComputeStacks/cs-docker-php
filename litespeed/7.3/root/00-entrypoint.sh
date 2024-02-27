@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+mkdir -p /usr/local/lsws
+
 if ! [ "$(ls -A /var/www)" ]; then
   echo >&2 "No files found in volume - copying default files..."
   mv /usr/src/default/* /var/www/

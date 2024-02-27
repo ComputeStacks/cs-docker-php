@@ -63,7 +63,7 @@ jobs:
         run: >
           docker run --name=testphp74 -d \
             -e CS_AUTH_KEY=FcUpBTaoi746JbAdhWqJwtmXC0en1M3u -e METADATA_SERVICE=http://localhost \
-            -e METADATA_AUTH=foobar123 ${{ matrix.image }}:7.4-litespeed
+            -e METADATA_AUTH=foobar123 -e LS_ADMIN_PW=ch3ngm3 ${{ matrix.image }}:7.4-litespeed
           bash ./scripts/container-health.sh testphp74
 
       - name: Build and push

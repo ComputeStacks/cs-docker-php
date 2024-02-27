@@ -11,3 +11,7 @@ else
     echo "Failed to set Litespeed admin password to ${LS_ADMIN_PW}, leaving default at 123456."
   fi
 fi
+
+echo "Ensuring Litespeed Admin file permissions are correct"
+chown lsadm:lsadm /usr/local/lsws/admin/conf/admin_config.conf
+chown lsadm:lsadm /usr/local/lsws/admin/conf/htpasswd

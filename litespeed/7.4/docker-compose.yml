@@ -1,0 +1,9 @@
+version: "3.6"
+services:
+  wordpress:
+    build:
+      context: .
+    environment:
+      CS_AUTH_KEY: FcUpBTaoi746JbAdhWqJwtmXC0en1M3u
+      METADATA_SERVICE: http://localhost
+      METADATA_AUTH: foobar
