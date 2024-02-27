@@ -196,4 +196,7 @@ COPY root/lswsctrl.sh /usr/local/bin/lswsctrl
 COPY root/httpd_config.conf /usr/src/lsws/conf/httpd_config.conf
 COPY root/monarx-agent.conf /etc/monarx-agent.conf
 
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD curl --get --fail http://localhost/healthcheck/ || exit 1
+
 EXPOSE 80 7080

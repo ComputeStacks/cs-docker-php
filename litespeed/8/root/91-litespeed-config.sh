@@ -32,3 +32,35 @@ accesslog /var/www/logs/access.log {
 }
 EOF
 fi 
+
+echo >&2 "Configuring container healthcheck..."
+
+mkdir -p /opt/healthcheck
+cat << 'EOF' > /opt/healthcheck/index.php
+<?php echo time() . "\n"; ?>
+EOF
+chown -R www-data:www-data /opt/healthcheck
+
+if grep -Fq 'healthcheck' /usr/local/lsws/conf/vhosts/Default/vhconf.conf; then
+  echo "healthcheck configuration found, skipping..."
+else
+  cat << EOF >> '/usr/local/lsws/conf/vhosts/Default/vhconf.conf'
+
+context /healthcheck {
+  location                /opt/healthcheck/
+  allowBrowse             1
+  indexFiles              index.php
+
+  rewrite  {
+
+  }
+  addDefaultCharset       off
+
+  phpIniOverride  {
+
+  }
+}
+
+EOF
+fi 
+
