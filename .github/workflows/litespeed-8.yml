@@ -13,6 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
+        include:
           - php_version: "8.1"
             lsphp_version: "81"
             image: "ghcr.io/computestacks/cs-docker-php"
