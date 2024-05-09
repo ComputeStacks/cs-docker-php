@@ -1,5 +1,12 @@
 # ComputeStacks PHP Changelog
 
+## 2024-may-9
+
+* Update monarx configuration to set the host_id to match the service name rather than the container hostname, and add node_id tag.
+* Add in a rate limiter for postfix.
+
+***
+
 ## 2024-feb-26
 
 ### PHP 8-nginx images

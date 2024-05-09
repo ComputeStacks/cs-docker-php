@@ -66,6 +66,7 @@ RUN set -ex; \
       liblzf-dev \
       git \
       nginx-extras \
+      jq \
     ; \
     echo "postfix postfix/mailname string docker.local" | debconf-set-selections \
     && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \

@@ -72,6 +72,7 @@ RUN set -ex; \
       inotify-tools \
       mailutils \
       apt-utils \
+      jq \
     ; \
     echo "postfix postfix/mailname string docker.local" | debconf-set-selections \
     && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \

@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
-MONARX_PHP_VERSION=$(echo $PHP_VERSION | awk '{split($0,i,".");print i[1] i[2]}')
+MONARX_PHP_VERSION=$(echo "$PHP_VERSION" | awk '{split($0,i,".");print i[1] i[2]}')
 PHP_INI_DIR=/etc/php/${PHP_VERSION}/mods-available/
 PHP_EXT_DIR=$(/usr/bin/php-config --extension-dir)
 
-if [ ! -f /usr/bin/monarx-agen ]; then
+# Loop through the metadata service and select the node_id for the container we're running on.
+# requires ComputeStacks controller v9.3.1+
+NODE_ID=$(curl -H "Content-Type: application/json" -H "Authorization: Bearer ${METADATA_AUTH}" "$METADATA_URL" | jq '.services[].containers[] | select(.name == env.HOSTNAME) | .node_id')
+
+if [ ! -f /usr/bin/monarx-agent ]; then
   echo >&2 "Monarx binary not found, disabling monarx service."
   touch /etc/service/monarx/down
   exit 0
@@ -16,26 +20,35 @@ if [ ! -f "/usr/lib/monarx-protect/monarxprotect-php${MONARX_PHP_VERSION}.so" ];
     touch /etc/service/monarx/down
     /sbin/phpdismod monarx
   fi
-elif [ -z ${MONARX_ID} ] || [ -z ${MONARX_SECRET} ]; then
+elif [ -z "$MONARX_ID" ] || [ -z "$MONARX_SECRET" ]; then
   echo >&2 "MONARX_ID or MONARX_SECRET not set, disabling monarx."
    if [ ! -f /etc/service/monarx/down ]; then
     touch /etc/service/monarx/down
     /sbin/phpdismod monarx
   fi
 else
-  sed -i "s/SET_CLIENT_ID/$MONARX_ID/g" /etc/monarx-agent.conf
-  sed -i "s/SET_CLIENT_SECRET/$MONARX_SECRET/g" /etc/monarx-agent.conf
+  sed -i "s/SET_CLIENT_ID/${MONARX_ID}/g" /etc/monarx-agent.conf
+  sed -i "s/SET_CLIENT_SECRET/${MONARX_SECRET}/g" /etc/monarx-agent.conf
   # Fallback to hostname if agent is not set.
-  if [ -z ${MONARX_AGENT} ]; then    
-    sed -i "s/SET_SERVICE_NAME/$HOSTNAME/g" /etc/monarx-agent.conf
+  if [ -z "$MONARX_AGENT" ]; then
+    sed -i "s/SET_SERVICE_NAME/${HOSTNAME}/g" /etc/monarx-agent.conf
   else
-    sed -i "s/SET_SERVICE_NAME/$MONARX_AGENT/g" /etc/monarx-agent.conf
+    sed -i "s/SET_SERVICE_NAME/${MONARX_AGENT}/g" /etc/monarx-agent.conf
+
+    # MONARX_AGENT is set to the service name
+    sed -i "s/SET_HOSTNAME/${MONARX_AGENT}/g" /etc/monarx-agent.conf
+  fi
+  # Include container node id if present
+  if [[ -z "$NODE_ID" || "$NODE_ID" == "null" ]]; then
+    echo "Missing NodeID, skipping monarx node tag..."
+  else
+    echo "tags = node-${NODE_ID}" >> /etc/monarx-agent.conf
   fi
   # grab latest file
   if [ -f "${PHP_EXT_DIR}monarxprotect-php${MONARX_PHP_VERSION}.so" ]; then
     rm "${PHP_EXT_DIR}monarxprotect-php${MONARX_PHP_VERSION}.so"
   fi
-  cp /usr/lib/monarx-protect/monarxprotect-php${MONARX_PHP_VERSION}.so $PHP_EXT_DIR
+  cp "/usr/lib/monarx-protect/monarxprotect-php${MONARX_PHP_VERSION}.so" "$PHP_EXT_DIR"
   echo "extension=monarxprotect-php${MONARX_PHP_VERSION}.so" > "${PHP_INI_DIR}monarxprotect.ini"
   if [ -f /etc/service/monarx/down ]; then
     echo "Activating Monarx"
