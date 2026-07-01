@@ -1,5 +1,11 @@
 # ComputeStacks PHP Changelog
 
+## 2026-july-1
+
+* Fixed `env[CS_AUTH_KEY]`/`env[METADATA_AUTH]` templating in `51-app-server.sh`: use `|` as the `sed` delimiter so base64 values containing `/` don't break the substitution and leave the value empty (which made php-fpm fail to start).
+
+***
+
 ## 2024-may-9
 
 * Update monarx configuration to set the host_id to match the service name rather than the container hostname, and add node_id tag.

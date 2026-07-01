@@ -51,7 +51,10 @@ if [ -z ${CS_AUTH_KEY} ]; then
   export CS_AUTH_KEY=$(xxd -l24 -ps /dev/urandom | xxd -r -ps | base64 | tr -d = | tr + - | tr / _)
 fi
 
-sed -i "s/env\[CS_AUTH_KEY\] = .*/env\[CS_AUTH_KEY\] = '$CS_AUTH_KEY'/g" $FPM_POOL_CONF
+# Use '|' as the sed delimiter: CS_AUTH_KEY is base64 and can contain '/', which
+# collides with a '/' delimiter, breaks the substitution, and leaves the pool's
+# env[CS_AUTH_KEY] empty -> php-fpm refuses to start ("empty value").
+sed -i "s|env\[CS_AUTH_KEY\] = .*|env\[CS_AUTH_KEY\] = '$CS_AUTH_KEY'|g" $FPM_POOL_CONF
 
 # Add our metadata environmental variables
 if [ -z ${METADATA_SERVICE} ]; then
@@ -62,5 +65,5 @@ fi
 if [ -z ${METADATA_AUTH} ]; then
   echo >&2 "METADATA_AUTH not set."
 else
-  sed -i "s/env\[METADATA_AUTH\] = .*/env\[METADATA_AUTH\] = '$METADATA_AUTH'/g" $FPM_POOL_CONF
+  sed -i "s|env\[METADATA_AUTH\] = .*|env\[METADATA_AUTH\] = '$METADATA_AUTH'|g" $FPM_POOL_CONF
 fi
