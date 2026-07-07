@@ -1,5 +1,13 @@
 # ComputeStacks PHP Changelog
 
+## 2026-july-7
+
+* Fixed the Relay (`relay.so`) download in the nginx and LiteSpeed 8 / 8.0 images. The `builds.r2.relay.so/meta/latest` endpoint started returning an empty body, so the Relay version resolved to empty, the download URL 404'd, and the builds broke (nginx failed the build directly; LiteSpeed built green but the container failed its runtime health check because `relay-pkg.so` was missing). The version is now resolved from `meta/latest` with a GitHub releases fallback, the exact asset URL and sha256 are looked up from the release's `artifacts.json`, the download is verified against that checksum, and the build fails fast with a clear error if the build can't be resolved. LiteSpeed 8.0 keeps selecting the non-`libssl3` asset (focal / OpenSSL 1.1).
+* Made a failed Relay download abort the LiteSpeed 8 / 8.0 builds instead of being silently swallowed by the New Relic step that follows it.
+* Added `php${php_version}-msgpack` to the nginx images so the phpredis build finds `php_msgpack.h` and enables the msgpack serializer (`Available serializers => php, json, igbinary, msgpack`).
+
+***
+
 ## 2026-july-1
 
 * Fixed `env[CS_AUTH_KEY]`/`env[METADATA_AUTH]` templating in `51-app-server.sh`: use `|` as the `sed` delimiter so base64 values containing `/` don't break the substitution and leave the value empty (which made php-fpm fail to start).

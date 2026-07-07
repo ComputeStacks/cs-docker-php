@@ -140,12 +140,26 @@ RUN cd /usr/src; \
         && make install \
         && echo "extension=redis.so" > /usr/local/lsws/lsphp80/etc/php/8.0/mods-available/redis.ini \
     ; \
-    RELAY_VERSION=$(curl -fs -L https://builds.r2.relay.so/meta/latest | awk -F '"' '{print $1}') \
-        && wget -O /tmp/relay.tar.gz "https://builds.r2.relay.so/$RELAY_VERSION/relay-$RELAY_VERSION-php8.0-debian-x86-64.tar.gz" \
+    RELAY_VERSION="$(curl -fsSL https://builds.r2.relay.so/meta/latest || true)" \
+    ; \
+    [ -n "$RELAY_VERSION" ] || RELAY_VERSION="$(curl -fsSL https://api.github.com/repos/cachewerk/relay/releases/latest | jq -r '.tag_name // empty' || true)" \
+    ; \
+    { [ -n "$RELAY_VERSION" ] && [ "$RELAY_VERSION" != "null" ]; } || { echo "ERROR: could not determine Relay version" >&2; exit 1; } \
+    ; \
+    RELAY_ASSET="$(curl -fsSL "https://builds.r2.relay.so/${RELAY_VERSION}/artifacts.json" | jq -c 'map(select(.php == "8.0" and .os == "debian" and (.name | endswith("-x86-64.tar.gz")) and (.name | contains("+libssl3") | not))) | first // {}' || echo '{}')" \
+    ; \
+    RELAY_URL="$(echo "$RELAY_ASSET" | jq -r '.url // ""')" \
+    ; \
+    RELAY_SHA="$(echo "$RELAY_ASSET" | jq -r '.sha256 // ""')" \
+    ; \
+    [ -n "$RELAY_URL" ] || { echo "ERROR: no Relay build for php8.0/x86-64 in ${RELAY_VERSION}" >&2; exit 1; } \
+    ; \
+    { wget -O /tmp/relay.tar.gz "$RELAY_URL" \
+        && { [ -z "$RELAY_SHA" ] || echo "${RELAY_SHA}  /tmp/relay.tar.gz" | sha256sum -c -; } \
         && tar -xzf /tmp/relay.tar.gz -C /usr/src \
         && mv /usr/src/relay-* /usr/src/relay \
         && sed -i "s/00000000-0000-0000-0000-000000000000/$(cat /proc/sys/kernel/random/uuid)/" /usr/src/relay/relay-pkg.so \
-        && rm /tmp/relay.tar.gz \
+        && rm /tmp/relay.tar.gz; } || exit 1 \
     ; \
     wget -O /tmp/newrelic.tar.gz https://download.newrelic.com$(curl -fs -L https://download.newrelic.com/php_agent/release/ | grep -Eo "/\S+-linux.tar.gz\"" | tr -d '"') \
         && tar -xzvf /tmp/newrelic.tar.gz -C /usr/src \
