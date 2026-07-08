@@ -6,6 +6,7 @@
 * Made a failed Relay download abort the LiteSpeed 8 / 8.0 builds instead of being silently swallowed by the New Relic step that follows it.
 * Added `php${php_version}-msgpack` to the nginx images so the phpredis build finds `php_msgpack.h` and enables the msgpack serializer (`Available serializers => php, json, igbinary, msgpack`).
 * Dropped the `linux/arm64` build (and the QEMU setup) from the nginx images; they now build `linux/amd64` only. arm64 is no longer supported, and the emulated arm64 build was intermittently failing (a `libc-bin` post-install segfault under QEMU).
+* Bumped the GitHub Actions to their Node 24 majors (`checkout@v5`, `setup-buildx-action@v4`, `login-action@v4`, `metadata-action@v6`, `build-push-action@v7`) to clear the Node 20 deprecation warnings.
 
 ***
 
